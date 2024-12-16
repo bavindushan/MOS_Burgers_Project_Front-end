@@ -61,8 +61,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 300px;
-    margin-right: 300px;
+    margin-left: 100px; 
     margin-top: 10px;
     margin-bottom: 10px;
     width: auto;
@@ -82,4 +81,10 @@
 }
 .setting-icon img:hover{
     transform: scale(1.05);
+}
+
+.Setting-S-B{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
