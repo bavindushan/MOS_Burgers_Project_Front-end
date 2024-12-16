@@ -1,0 +1,124 @@
+.body {
+    background-color: rgb(0, 0, 0);
+    color: aliceblue;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+.row .col-lg-3, 
+.row .col-md-4, 
+.row .col-sm-6 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch; /* Ensure all cards in a row align evenly */
+}
+.category-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    border: none;
+    box-shadow: 0 4px 8px rgba(234, 245, 79, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.category-card:hover {
+    transform: scale(1.05);
+}
+
+.category-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+
+}
+.category-card .card-body {
+    text-align: center;
+    flex-grow: 1; 
+}
+
+.footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.justify-content-center a {
+    color: rgb(254, 241, 0);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+    margin-bottom: 10px;
+}
+
+.justify-content-center a:hover {
+    color: rgb(253, 253, 253);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+    text-decoration: underline;
+    margin-bottom: 20px;
+    transform: scale(1.05);
+}
+
+.SendArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 300px; 
+    margin-right: 300px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: auto;
+}
+
+.setting-icon{
+    display: flex;
+    justify-content: space-around;
+    align-items: safe;
+}
+.setting-icon img{
+    width: 50%;
+    height: 25px;
+    object-fit: cover;
+    margin-left: 15px;
+    margin-bottom: 5px;
+}
+.setting-icon img:hover{
+    transform: scale(1.05);
+}
+
+.Section{
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+.order-section{
+    margin-left: 10px;
+    margin-top: 20px;
+    
+}
+.contact-form input {
+    margin-top: 20px;
+    border: 1px solid rgb(255, 196, 0); 
+    border-radius: 10px; 
+    padding: 10px; 
+    box-shadow: none; 
+}
+
+.contact-form input:focus {
+    border: 1px solid rgb(190, 187, 0); 
+    outline: none; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+.contact-form button{
+    margin-top: 10px;
+}
+.contact-form h4{
+    color: rgb(255, 0, 0);
+}
+
