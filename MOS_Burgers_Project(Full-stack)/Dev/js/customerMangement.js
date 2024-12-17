@@ -86,7 +86,7 @@ function editCustomer(customerId) {
 }
 
 // Example usage
-viewCustomerDetails(1); // Call this function to display customer details
+//viewCustomerDetails(1); // Call this function to display customer details
 
 
 // Example Usage:
