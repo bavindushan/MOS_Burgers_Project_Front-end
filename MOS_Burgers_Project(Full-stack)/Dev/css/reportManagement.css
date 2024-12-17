@@ -18,10 +18,23 @@
 }
 
 .h1{
-    padding-top: 100px;
+    padding-top: 70px;
+    padding-bottom: 40px;
     text-align: center;
 }
 .chart{
     margin-top: 10px;
     border: rgb(250, 171, 0) solid 2px;
+    width: 100%;
+}
+
+.table{
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.dropdown img{
+    margin-left: 440px;
 }

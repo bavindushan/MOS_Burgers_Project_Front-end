@@ -15,7 +15,7 @@
 
 <body class="body">
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="#">
                 <img src="../assest/icon/burger-icon.png" alt="MOS Burgers Icon" width="30" height="30"
@@ -36,8 +36,63 @@
                 </ul>
             </div>
         </div>
+    </nav> -->
+    <!-- Header -->
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="../assest/icon/burger-icon.png" alt="MOS Burgers Icon" width="30" height="30"
+                    class="d-inline-block align-text-top">
+                MOS Burgers
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
+                aria-labelledby="offcanvasDarkNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Admin Dashboard</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="admin-dashboard.html">Admin Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">View Reports</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Menu.html">Store Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="customerMangement.html">Customer Management</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Settings
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="#">Change Admin Password</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <form class="d-flex mt-3" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </nav>
-
 
     <h2 class="text-center mb-4">Products List</h2>
     <!-- Add nav bar for categories -->
@@ -78,7 +133,8 @@
         <div class="row g-2">
             <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
                 <div class="card category-card">
-                    <img src="../assest/img/Burger-Category/Classic Burger (Large).webp" class="card-img-top" alt="Burgers">
+                    <img src="../assest/img/Burger-Category/Classic Burger (Large).webp" class="card-img-top"
+                        alt="Burgers">
                     <div class="card-body text-center">
                         <h5 class="card-title">Classic Burger</h5>
                         <h6>Price(LKR): 200.00</h6>
@@ -134,7 +190,8 @@
             </div>
             <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
                 <div class="card category-card">
-                    <img src="../assest/img/Burger-Category/Crispy Chicken Burger.webp" class="card-img-top" alt="Burgers">
+                    <img src="../assest/img/Burger-Category/Crispy Chicken Burger.webp" class="card-img-top"
+                        alt="Burgers">
                     <div class="card-body text-center">
                         <h5 class="card-title">Crispy Chicken Burger</h5>
                         <h6>Price(LKR): 200.00</h6>
@@ -190,7 +247,8 @@
             </div>
             <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
                 <div class="card category-card">
-                    <img src="../assest/img/Burger-Category/Double-Cheese Burger.webp" class="card-img-top" alt="Burgers">
+                    <img src="../assest/img/Burger-Category/Double-Cheese Burger.webp" class="card-img-top"
+                        alt="Burgers">
                     <div class="card-body text-center">
                         <h5 class="card-title">Double Cheese Burger</h5>
                         <h6>Price(LKR): 200.00</h6>
@@ -236,8 +294,9 @@
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>    <script src="../js/Menu.js"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="../js/Menu.js"></script>
 </body>
 
 </html>
