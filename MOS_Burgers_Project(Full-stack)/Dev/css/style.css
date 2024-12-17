@@ -12,7 +12,7 @@
     align-items: center;
     justify-content: right;
     text-align: center;
-    position: relative; /* Required for the pseudo-element */
+    position: relative; 
 }
 
 .banner::after {
@@ -21,9 +21,9 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 100px; /* Adjust this height for the fade area */
+    height: 100px; 
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 100%);
-    pointer-events: none; /* Ensures the pseudo-element doesn't block interactions */
+    pointer-events: none; 
 }
 
 .banner h1 {
@@ -46,12 +46,12 @@
     height: 190px;
     object-fit: cover;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow added */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
     transition: transform 0.3s ease-in-out;
 }
 
 .category-card img:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Enhance shadow on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); 
     transform: scale(1.05);
 }
 
@@ -61,4 +61,11 @@
     color: white;
     padding: 20px 0;
     text-align: center;
+}
+
+.nav-img-user-icon{
+    margin-left: 10px;
+}
+.nav-img-user-icon:hover{
+    transform: scale(1.05);
 }
