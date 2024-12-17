@@ -59,12 +59,11 @@
 
 .SendArea {
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-left: 100px; 
+    margin-right: 400px;
     margin-top: 10px;
     margin-bottom: 10px;
-    width: auto;
+    width: 45%;
     border-radius: 10%;
 }
 
@@ -84,8 +83,3 @@
     transform: scale(1.05);
 }
 
-.Setting-S-B{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
