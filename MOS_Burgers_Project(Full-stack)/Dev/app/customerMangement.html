@@ -41,13 +41,13 @@
                                 Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">View Reports</a>
+                            <a class="nav-link" href="reportManagement.html">View Reports</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="Menu.html">Store Management</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Customer Management</a>
+                            <a class="nav-link" href="customerMangement.html">Customer Management</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -71,8 +71,7 @@
             </div>
         </div>
     </nav>
-    <h1 class="h1">Customer Management</h1>
-    <hr class="alert-danger">
+    
 
     <!-- cutomer table -->
     <table class="table table-bordered">
@@ -91,17 +90,19 @@
                 <td>John Doe</td>
                 <td>john@example.com</td>
                 <td>Admin</td>
-                <td><div class="d-flex justify-content-evenly">
-                    <div class="col ad-st-icon">
-                        <img src="../assest/icon/eye.png" alt="">
+                <td>
+                    <div class="d-flex">
+                        <div class="col ad-st-icon">
+                            <img src="../assest/icon/eye.png" alt="View" onclick="viewCustomerDetails()">
+                        </div>
+                        <div class="col ad-st-icon">
+                            <img src="../assest/icon/edit.png" alt="Edit" onclick="editCustomer(1)">
+                        </div>
+                        <div class="col ad-st-icon">
+                            <img src="../assest/icon/delete.png" alt="Delete">
+                        </div>
                     </div>
-                    <div class="col ad-st-icon">
-                        <img src="../assest/icon/edit.png" alt="">
-                    </div>
-                    <div class="col ad-st-icon">
-                        <img src="../assest/icon/delete.png" alt="">
-                    </div>
-                </div></td>
+                </td>
             </tr>
         </tbody>
     </table>
