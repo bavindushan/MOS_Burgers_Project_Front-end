@@ -2,6 +2,23 @@ console.log('hello');
 
 console.log('hello');
 
+// Load JSON file
+fetch('../data/data.json') // Adjust the path to your JSON file
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to load JSON file');
+        }
+        return response.json(); // Parse JSON data
+    })
+    .then(data => {
+        console.log(data); // Use the JSON data
+        // Example: Display the admin password
+        console.log(`Admin Password: ${data.adminPassword}`);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
 async function checkAdminPassword() {
     console.log("Function called");
     const { value: password } = await Swal.fire({

@@ -1,6 +1,5 @@
 console.log("Hellow");
 
-
 async function changeAdminPassword() {
     console.log("Function called");
     const { value: password } = await Swal.fire({
