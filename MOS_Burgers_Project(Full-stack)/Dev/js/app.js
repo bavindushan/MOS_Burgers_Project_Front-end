@@ -3,7 +3,7 @@ console.log('hello');
 async function checkAdminPassword() {
 
     // Load JSON file
-    fetch('../data/data.json') // Adjust the path to your JSON file
+    fetch('../data/data.json')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to load JSON file');
