@@ -1,77 +1,77 @@
-let adminPassword = ['123'];
+let adminPassword = ['1234'];
 
-let productList = {
+export const  productList = {
     Burgers: [
-        {
+        { 
             itemCode: "B1001",
-            name: "Classic Burger",
-            price: 1500.0,
-            discount: 0,
-            img: "../assets/images/Burger-Category/Classic Burger (Large).webp",
+            name: "Classic Burger", 
+            price: 200.00, 
+            discount: 16, 
+            image: "../assest/img/Burger-Category/Classic Burger (Large).webp" 
         },
-        {
+        { 
             itemCode: "B1002",
-            name: "Turkey Burger",
-            price: 1600.0,
-            discount: 15,
-            img: "../assets/images/Burger-Category/turkey-burger.png",
+            name: "Turkey Burger", 
+            price: 200.00,
+            discount: 16, 
+            image: "../assest/img/Burger-Category/turkey-burger.png" 
         },
-        {
+        { 
             itemCode: "B1003",
-            name: "Chicken Burger",
-            price: 1400.0,
-            discount: 0,
-            img: "../assets/images/Burger-Category/chicken-burger.webp",
+            name: "Chicken Burger", 
+            price: 200.00,
+            discount: 16, 
+            image: "../assest/img/Burger-Category/chicken-burger.webp" 
         },
-        {
+        { 
             itemCode: "B1004",
-            name: "Cheese Chicken Burger",
-            price: 1000.0,
-            discount: 5,
-            img: "../assets/images/Burger-Category/cheese burger.webp",
+            name: "Cheese Chicken Burger", 
+            price: 200.00,
+            discount: 16, 
+            image: "../assest/img/Burger-Category/cheese burger.webp" 
         },
-        {
+        { 
             itemCode: "B1005",
-            name: "Crispy Chicken Burger",
-            price: 1200.0,
-            discount: 0,
-            img: "../assets/images/Burger-Category/Crispy Chicken Burger.webp",
+            name: "Crispy Chicken Burger", 
+            price: 200.00,
+            discount: 16, 
+            image: "../assest/img/Burger-Category/Crispy Chicken Burger.webp" 
         },
-        {
+        { 
             itemCode: "B1006",
-            name: "Special Olive Burger",
-            price: 1800.0,
-            discount: 5,
-            img: "../assets/images/Burger-Category/olive-burger.webp",
+            name: "Special Olive Burger", 
+            price: 200.00,
+            discount: 16, 
+            image: "../assest/img/Burger-Category/olive-burger.webp" 
         },
-        {
+        { 
             itemCode: "B1007",
-            name: "Bacon Burger",
-            price: 650.0,
-            discount: 0,
-            img: "../assets/images/Burger-Category/becon-burger.webp",
+            name: "Bacon Burger", 
+            price: 200.00,
+            discount: 16, 
+            image: "../assest/img/Burger-Category/becon-burger.webp" 
         },
-        {
+        { 
             itemCode: "B1008",
-            name: "Shawarma Burger",
-            price: 800.0,
-            discount: 12,
-            img: "../assets/images/Burger-Category/shawarma-burger.webp",
+            name: "Shawarma Burger", 
+            price: 200.00,
+            discount: 16, 
+            image: "../assest/img/Burger-Category/shawarma-burger.webp" 
         },
-        {
+        { 
             itemCode: "B1009",
-            name: "Double Cheese Burger",
-            price: 1250.0,
-            discount: 20,
-            img: "../assets/images/Burger-Category/Double-Cheese Burger.webp",
+            name: "Double Cheese Burger", 
+            price: 200.00,
+            discount: 16, 
+            image: "../assest/img/Burger-Category/Double-Cheese Burger.webp" 
         },
-        {
-            itemCode: "B1010",
-            name: "Paneer Burger",
-            price: 900.0,
-            discount: 0,
-            img: "../assets/images/Burger-Category/Paneer Burger.webp",
-        },
+        { 
+            itemCode: "B10010",
+            name: "Paneer Burger", 
+            price: 200.00, 
+            discount: 16,
+            image: "../assest/img/Burger-Category/Paneer Burger.webp" 
+        }
     ],
     Submarines: [
         {
@@ -79,49 +79,49 @@ let productList = {
             name: "Double Cheese Chicken Submarine",
             price: 1900.0,
             discount: 16,
-            img: "../assets/images/Submarine-Category/Double Cheese Chicken Submarine.webp",
+            image: "../assest/img/Submarine-Category/Double Cheese Chicken Submarine.webp",
         },
         {
             itemCode: "B10012",
             name: "MOS Special Submarine",
             price: 3000.0,
             discount: 0,
-            img: "../assets/images/Submarine-Category/MOS Special Submarine.webp",
+            image: "../assest/img/Submarine-Category/MOS Special Submarine.webp",
         },
         {
             itemCode: "B10013",
             name: "Special Horgie Submarine",
             price: 2300.0,
             discount: 0,
-            img: "../assets/images/Submarine-Category/Special Horgie Submarine.webp",
+            image: "../assest/img/Submarine-Category/Special Horgie Submarine.webp",
         },
         {
             itemCode: "B10014",
             name: "Cheese Submarine",
             price: 2200.0,
             discount: 0,
-            img: "../assets/images/Submarine-Category/Cheese Submarine.webp",
+            image: "../assest/img/Submarine-Category/Cheese Submarine.webp",
         },
         {
             itemCode: "B10015",
             name: "Chicken Submarine",
             price: 2000.0,
             discount: 0,
-            img: "../assets/images/Submarine-Category/chickensub.png",
+            image: "../assest/img/Submarine-Category/chickensub.png",
         },
         {
             itemCode: "B10016",
             name: "Grinder Submarine",
             price: 2300.0,
             discount: 0,
-            img: "../assets/images/Submarine-Category/Grinder Submarine.webp",
+            image: "../assest/img/Submarine-Category/Grinder Submarine.webp",
         },
         {
             itemCode: "B10017",
             name: "Crispy Chicken Submarine",
             price: 1500.0,
             discount: 0,
-            img: "../assets/images/Submarine-Category/Crispy Chicken Submarine (Large).jpg",
+            image: "../assest/img/Submarine-Category/Crispy Chicken Submarine (Large).jpg",
         },
     ],
     Pasta: [
@@ -130,49 +130,49 @@ let productList = {
             name: "Chicken Cheese Pasta",
             price: 1600.0,
             discount: 15,
-            img: "../assets/images/Pasta-Category/Chicken Chesese pasta.png",
+            image: "../assest/img/Pasta-Category/Chicken Chesese pasta.png",
         },
         {
             itemCode: "B10019",
             name: "Chicken Penne Pasta",
             price: 1700.0,
             discount: 0,
-            img: "../assets/images/Pasta-Category/chicken panne.png",
+            image: "../assest/img/Pasta-Category/chicken panne.png",
         },
         {
             itemCode: "B10020",
             name: "Ground Turkey Pasta Bake",
             price: 2900.0,
             discount: 10,
-            img: "../assets/images/Pasta-Category/Ground Turkey Pasta Bake.webp",
+            image: "../assest/img/Pasta-Category/Ground Turkey Pasta Bake.webp",
         },
         {
             itemCode: "B10021",
             name: "Creamy Shrimp Pasta",
             price: 2000.0,
             discount: 0,
-            img: "../assets/images/Pasta-Category/Creamy Shrimp Pasta.webp",
+            image: "../assest/img/Pasta-Category/Creamy Shrimp Pasta.webp",
         },
         {
             itemCode: "B10022",
             name: "Lemon Butter Pasta",
             price: 1950.0,
             discount: 0,
-            img: "../assets/images/Pasta-Category/Lemon Butter Pasta.webp",
+            image: "../assest/img/Pasta-Category/Lemon Butter Pasta.webp",
         },
         {
             itemCode: "B10023",
             name: "Tagliatelle Chicken Pasta",
             price: 2400.0,
             discount: 1,
-            img: "../assets/images/Pasta-Category/Tagliatelle Pasta.png",
+            image: "../assest/img/Pasta-Category/Tagliatelle Pasta.png",
         },
         {
             itemCode: "B10024",
             name: "Baked Ravioli",
             price: 2000.0,
             discount: 1,
-            img: "../assets/images/Pasta-Category/Baked Ravioli.webp",
+            image: "../assest/img/Pasta-Category/Baked Ravioli.webp",
         },
     ],
     Fries: [
@@ -181,21 +181,21 @@ let productList = {
             name: "Steak Fries",
             price: 1200.0,
             discount: 0,
-            img: "../assets/images/Fries-Category/Steak Fries.png",
+            image: "../assest/img/Fries-Category/Steak Fries.png",
         },
         {
             itemCode: "B10026",
             name: "French Fries",
             price: 800.0,
             discount: 0,
-            img: "../assets/images/Fries-Category/French Fries.webp",
+            image: "../assest/img/Fries-Category/French Fries.webp",
         },
         {
             itemCode: "B10027",
             name: "Potato Fries",
             price: 600.0,
             discount: 0,
-            img: "../assets/images/Fries-Category/Sweet Potato Fries.webp",
+            image: "../assest/img/Fries-Category/Sweet Potato Fries.webp",
         },
     ],
 
@@ -205,28 +205,28 @@ let productList = {
             name: "Fried Chicken",
             price: 1200.0,
             discount: 0,
-            img: "../assets/images/Chicken-Category/Fried Chicken.png",
+            image: "../assest/img/Chicken-Category/Fried Chicken.png",
         },
         {
             itemCode: "B10029",
             name: "BBQ Chicken",
             price: 2100.0,
             discount: 0,
-            img: "../assets/images/Chicken-Category/BBQ Chicken.png",
+            image: "../assest/img/Chicken-Category/BBQ Chicken.png",
         },
         {
             itemCode: "B10030",
             name: "Devilled Chicken",
             price: 900.0,
             discount: 0,
-            img: "../assets/images/Chicken-Category/Devilled Chicken.webp",
+            image: "../assest/img/Chicken-Category/Devilled Chicken.webp",
         },
         {
             itemCode: "B10031",
             name: "Hot Wings",
             price: 2400.0,
             discount: 5,
-            img: "../assets/images/Chicken-Category/Hot Wings.png",
+            image: "../assest/img/Chicken-Category/Hot Wings.png",
         },
     ],
     Beverages: [
@@ -235,28 +235,28 @@ let productList = {
             name: "Pepsi (330ml)",
             price: 990.0,
             discount: 2,
-            img: "../assets/images/Bevarages-Category/Pepsi.webp",
+            image: "../assest/img/Bevarages-Category/Pepsi.webp",
         },
         {
             itemCode: "B10033",
             name: "Coca-Cola (330ml)",
             price: 1230.0,
             discount: 0,
-            img: "../assets/images/Bevarages-Category/Coca-Cola.webp",
+            image: "../assest/img/Bevarages-Category/Coca-Cola.webp",
         },
         {
             itemCode: "B10034",
             name: "Sprite (330ml)",
             price: 1500.0,
             discount: 3,
-            img: "../assets/images/Bevarages-Category/Sprite.webp",
+            image: "../assest/img/Bevarages-Category/Sprite.webp",
         },
         {
             itemCode: "B10035",
             name: "Mirinda (330ml)",
             price: 850.0,
             discount: 7,
-            img: "../assets/images/Bevarages-Category/Mirinda.webp",
+            image: "../assest/img/Bevarages-Category/Mirinda.webp",
         },
     ],
 };

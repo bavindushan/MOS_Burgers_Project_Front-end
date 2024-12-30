@@ -1,9 +1,10 @@
 console.log("app.js loaded");
 
-import dataManager from '../data/data.js';
+import { getAdminPassword } from '../data/data.js'; // Import the getAdminPassword method
 
 async function checkAdminPassword() {
     try {
+        // Step 1: Prompt admin to enter their password
         const { value: password } = await Swal.fire({
             title: "Enter your admin password",
             input: "password",
@@ -16,10 +17,11 @@ async function checkAdminPassword() {
             }
         });
 
-        // Use the dataManager's verifyPassword method
-        const isPasswordValid = dataManager.verifyPassword(password);
+        // Step 2: Validate the entered password against the stored password
+        const isPasswordValid = password === getAdminPassword();
 
         if (isPasswordValid) {
+            // Step 3: Notify success and redirect
             await Swal.fire({
                 icon: "success",
                 title: "Success",
@@ -30,6 +32,7 @@ async function checkAdminPassword() {
 
             window.location.href = "../app/admin-dashboard.html"; // Redirect to admin dashboard
         } else {
+            // Step 4: Notify error for incorrect password
             await Swal.fire({
                 icon: "error",
                 title: "Error",
@@ -38,6 +41,7 @@ async function checkAdminPassword() {
         }
     } catch (error) {
         console.error('Authentication error:', error);
+        // Notify error if any exception occurs
         await Swal.fire({
             icon: "error",
             title: "Error",
