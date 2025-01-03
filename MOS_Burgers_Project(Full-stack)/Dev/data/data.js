@@ -384,7 +384,7 @@ export const customerArray = [
     },
 ];
 
-let orderList = [
+export const orderList = [
     {
         customerId: 1,
         customerName: "Saman Silva",
