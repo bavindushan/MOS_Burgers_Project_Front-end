@@ -261,7 +261,7 @@ export const  productList = {
     ],
 };
 
-let customerArray = [
+export const customerArray = [
     {
         customerID: 1,
         img: "../assets/images/man.png",

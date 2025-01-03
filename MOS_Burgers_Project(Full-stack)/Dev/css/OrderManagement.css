@@ -122,3 +122,27 @@
     color: rgb(255, 0, 0);
 }
 
+.add-customer-form input{
+        margin-top: 20px;
+        border: 1px solid rgb(255, 196, 0); 
+        border-radius: 10px; 
+        padding: 10px; 
+        box-shadow: none;
+}
+.add-customer-form input:focus {
+    border: 1px solid rgb(190, 187, 0); 
+    outline: none; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+.add-customer-form select{
+        margin-top: 20px;
+        border: 1px solid rgb(255, 196, 0); 
+        border-radius: 10px; 
+        padding: 10px; 
+        box-shadow: none;
+}
+.add-customer-form select:focus {
+    border: 1px solid rgb(190, 187, 0); 
+    outline: none; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}

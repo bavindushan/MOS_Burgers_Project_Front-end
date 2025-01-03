@@ -43,7 +43,7 @@
 
 
     <h2 class="text-center mb-4">Place Your Order Here!</h2>
-    
+
 
     <!--Navigation Bar for Categories -->
     <ul class="nav justify-content-center">
@@ -71,8 +71,8 @@
     <!-- Add Search Bar -->
 
     <div class="SendArea">
-        <input type="text" id="txtInput" placeholder="Find Your Favorite Items Here!"
-            class="form-control txtInput text-center">
+        <input type="text" class="form-control txtInput text-center" id="searchInput" placeholder="Search for items"
+            oninput="searchItems(this.value)">
     </div>
 
 
@@ -82,7 +82,7 @@
         <div class="my-5 col-8">
             <div class="row g-2">
                 <!-- items add in js file -->
-                
+
             </div>
         </div>
 
@@ -94,23 +94,24 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h5>Order ID : P001</h5>
-                                <h5>Date : 2023-06-01</h5>
+                                <h5 id="orderDateandTime"></h5>
                             </div>
                             <div>
-                                <img src="../assest/icon/add-alert.png" alt="">
+                                <img src="../assest/icon/add-alert.png" alt="add customer" onclick="addCustomer()">
                             </div>
                         </div>
-                        <input class="form-control form-edit" id="name" type="text" placeholder="Search by Phone Number"
+                        <input class="form-control form-edit" id="phoneNumber" type="text"
+                            placeholder="Search by Phone Number" required oninput="searchCustomerByPhone()">
+                        <input class="form-control form-edit" id="customerName" type="text" placeholder="Customer Name"
                             required>
-                        <input class="form-control form-edit" id="email" type="text" placeholder="Customer Name"
-                            required>
-                        <input class="form-control form-edit" id="email" type="text" placeholder="Location" required>
+                        <input class="form-control form-edit" id="location" type="text" placeholder="Location" required>
+
                         <div class="d-flex justify-content-between mt-3">
                             <h5>Total Items: 0</h5>
                             <button class="btn btn-danger">Clear All</button>
                         </div>
                         <input class="form-control form-edit" id="email" type="text" placeholder="Additional Note"
-                            required>
+                            >
                         <div class="d-flex justify-content-between mt-4">
                             <div>
                                 <img src="../assest/icon/shopping-cart.png" alt="">
@@ -122,14 +123,15 @@
                             </div>
                         </div>
                         <div class="d-flex">
-                            <button class="btn btn-danger w-100 py-2 m-2" type="submit">Cancel Order</button>
-                            <button class="btn btn-success w-100 py-2 m-2" type="submit">Place Order</button>
+                            <button class="btn btn-danger w-100 py-2 m-2" type="submit" onclick="cancelOrder(event)">Cancel Order </button>
+                            <button class="btn btn-success w-100 py-2 m-2" type="submit" onclick="placeOrder(event)">Place Order</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
 
 
     <!-- Footer -->
