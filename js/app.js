@@ -30,7 +30,7 @@ async function checkAdminPassword() {
                 showConfirmButton: false
             });
 
-            window.location.href = "../app/admin-dashboard.html"; // Redirect to admin dashboard
+            window.location.href = "/app/admin-dashboard.html"; // Redirect to admin dashboard
         } else {
             // Step 4: Notify error for incorrect password
             await Swal.fire({
