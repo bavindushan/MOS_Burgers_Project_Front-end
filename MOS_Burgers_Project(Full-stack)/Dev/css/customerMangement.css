@@ -19,7 +19,7 @@
 }
 
 table{
-    margin-top: 60px;
+    margin-top: 40px;
 }
 
 .ad-st-icon img {
@@ -28,4 +28,9 @@ table{
 }
 .ad-st-icon img:hover {
     transform: scale(1.05);
+}
+
+.tital{
+    margin-top: 60px;
+    color: aliceblue;
 }

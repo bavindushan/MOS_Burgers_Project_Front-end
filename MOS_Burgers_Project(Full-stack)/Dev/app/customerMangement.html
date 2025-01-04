@@ -71,13 +71,15 @@
             </div>
         </div>
     </nav>
+
+    <h1 class="tital text-center">Customer Management</h1>
     
 
     <!-- cutomer table -->
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>#</th>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
@@ -91,17 +93,7 @@
                 <td>john@example.com</td>
                 <td>Admin</td>
                 <td>
-                    <div class="d-flex">
-                        <div class="col ad-st-icon">
-                            <img src="../assest/icon/eye.png" alt="View" onclick="viewCustomerDetails()">
-                        </div>
-                        <div class="col ad-st-icon">
-                            <img src="../assest/icon/edit.png" alt="Edit" onclick="editCustomer(1)">
-                        </div>
-                        <div class="col ad-st-icon">
-                            <img src="../assest/icon/delete.png" alt="Delete">
-                        </div>
-                    </div>
+                    <!-- icons set in the js -->
                 </td>
             </tr>
         </tbody>
@@ -124,7 +116,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    <script src="../js/customerMangement.js"></script>
+    <script type="module" src="../js/customerMangement.js"></script>
 </body>
 
 </html>

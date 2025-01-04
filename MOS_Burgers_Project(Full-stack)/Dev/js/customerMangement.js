@@ -1,92 +1,88 @@
-console.log("Hellow");
+import { customerArray } from '../data/data.js';
 
-// Customer array
-let customers = [
-    {
-        id: 1,
-        name: "John Doe",
-        email: "john@example.com",
-        phone: "123-456-7890",
-        address: "123 Main St, Springfield",
-    },
-    {
-        id: 2,
-        name: "Jane Smith",
-        email: "jane@example.com",
-        phone: "987-654-3210",
-        address: "456 Elm St, Shelbyville",
-    },
-];
 
-// Function to view customer details
-function viewCustomerDetails(customerId) {
-    const customer = customers.find(c => c.id === customerId);
-    if (!customer) {
-        Swal.fire("Error", "Customer not found!", "error");
-        return;
-    }
-    Swal.fire({
-        title: "Customer Details",
-        html: `
-            <div class="card" style="width: 18rem; margin: auto;">
-                <div class="card-body">
-                    <h5 class="card-title">${customer.name}</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Email: ${customer.email}</h6>
-                    <p class="card-text">
-                        <strong>Phone:</strong> ${customer.phone}<br>
-                        <strong>Address:</strong> ${customer.address}
-                    </p>
-                    <button class="btn btn-primary" onclick="editCustomer(${customer.id})">Edit</button>
+function populateCustomerTable() {
+    const tableBody = document.querySelector('.table tbody');
+    tableBody.innerHTML = ''; // Clear existing rows
+
+    customerArray.forEach(customer => {
+        const row = document.createElement('tr');
+
+        // Create table cells for each customer
+        const idCell = document.createElement('td');
+        idCell.textContent = customer.customerID;
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = `${customer.firstName} ${customer.lastName}`;
+
+        const emailCell = document.createElement('td');
+        emailCell.textContent = customer.email;
+
+        const roleCell = document.createElement('td');
+        roleCell.textContent = customer.occupation;
+
+        const settingsCell = document.createElement('td');
+        settingsCell.innerHTML = `
+            <div class="d-flex">
+                <div class="col ad-st-icon">
+                    <img src="../assest/icon/eye.png" alt="View" onclick="viewCustomer(${customer.customerID})">
+                </div>
+                <div class="col ad-st-icon">
+                    <img src="../assest/icon/edit.png" alt="Edit" onclick="editCustomer(${customer.customerID})">
+                </div>
+                <div class="col ad-st-icon">
+                    <img src="../assest/icon/delete.png" alt="Delete" onclick="deleteCustomer(${customer.customerID})">
                 </div>
             </div>
-        `,
-        showConfirmButton: false,
-        showCloseButton: true,
+        `;
+
+        // Append the cells to the row
+        row.appendChild(idCell);
+        row.appendChild(nameCell);
+        row.appendChild(emailCell);
+        row.appendChild(roleCell);
+        row.appendChild(settingsCell);
+
+        // Append the row to the table body
+        tableBody.appendChild(row);
     });
 }
 
-// Function to edit customer details
-function editCustomer(customerId) {
-    const customer = customers.find(c => c.id === customerId);
-    if (!customer) {
-        Swal.fire("Error", "Customer not found!", "error");
-        return;
-    }
+// Example function placeholders for view, edit, and delete actions
+function viewCustomer(customerID) {
+    console.log(`Viewing customer with ID: ${customerID}`);
     Swal.fire({
-        title: "Edit Customer Details",
-        html: `
-            <input id="editName" class="swal2-input" placeholder="Name" value="${customer.name}">
-            <input id="editEmail" class="swal2-input" placeholder="Email" value="${customer.email}">
-            <input id="editPhone" class="swal2-input" placeholder="Phone" value="${customer.phone}">
-            <input id="editAddress" class="swal2-input" placeholder="Address" value="${customer.address}">
-        `,
-        confirmButtonText: "Save",
-        showCancelButton: true,
-        preConfirm: () => {
-            const newName = document.getElementById("editName").value;
-            const newEmail = document.getElementById("editEmail").value;
-            const newPhone = document.getElementById("editPhone").value;
-            const newAddress = document.getElementById("editAddress").value;
-
-            if (!newName || !newEmail || !newPhone || !newAddress) {
-                Swal.showValidationMessage("All fields are required!");
-                return false;
-            }
-            return { newName, newEmail, newPhone, newAddress };
-        },
-    }).then(result => {
-        if (result.isConfirmed) {
-            customer.name = result.value.newName;
-            customer.email = result.value.newEmail;
-            customer.phone = result.value.newPhone;
-            customer.address = result.value.newAddress;
-            Swal.fire("Success", "Customer details updated successfully!", "success");
-        }
+        title: "This will be implement in the future!",
+        icon: "warning",
+        draggable: true
     });
 }
 
-// Example usage
-//viewCustomerDetails(1); // Call this function to display customer details
+function editCustomer(customerID) {
+    console.log(`Editing customer with ID: ${customerID}`);
+    Swal.fire({
+        title: "This will be implement in the future!",
+        icon: "warning",
+        draggable: true
+    });
+}
+
+function deleteCustomer(customerID) {
+    console.log(`Deleting customer with ID: ${customerID}`);
+    Swal.fire({
+        title: "This will be implement in the future!",
+        icon: "warning",
+        draggable: true
+    });
+}
+window.viewCustomer = viewCustomer;
+window.editCustomer = editCustomer;
+window.deleteCustomer = deleteCustomer;
 
 
-// Example Usage:
+
+
+// Initialize table population on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+    populateCustomerTable();
+});
