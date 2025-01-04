@@ -37,7 +37,8 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="admin-dashboard.html">Admin Dashboard</a>
+                            <a class="nav-link active" aria-current="page" href="admin-dashboard.html">Admin
+                                Dashboard</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">View Reports</a>
@@ -74,15 +75,15 @@
     <hr class="alert-danger">
 
     <!-- add chart -->
-    <div class=" d-flex m-3">
-        <div class="col-7">
+    <div class="d-flex justify-content-center">
+        <div class="col-lg-8 float-end">
             <div>
                 <div class="dropdown">
                     <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         Dropdown button
                     </button>
-                    <img src="../assest/icon/sharing.png" alt="">
+                    <img src="../assest/icon/sharing.png" alt="Generate PDF" id="generatePdf">
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#">monthly sales report</a></li>
                         <li><a class="dropdown-item" href="#"> annual sales report</a></li>
@@ -91,15 +92,6 @@
                 </div>
             </div>
             <canvas class="chart" id="myChart"></canvas>
-        </div>
-        <div class="col m-2">
-            <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6>Total Sales:100</h6>
-
-                </div>
-            </div>
         </div>
     </div>
 
@@ -124,6 +116,9 @@
             <p>&copy; 2024 MOS Burgers. All rights reserved.</p>
         </div>
     </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>

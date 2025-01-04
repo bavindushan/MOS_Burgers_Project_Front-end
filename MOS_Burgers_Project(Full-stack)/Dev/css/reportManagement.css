@@ -23,6 +23,8 @@
     text-align: center;
 }
 .chart{
+    display: flex;
+    
     margin-top: 10px;
     border: rgb(250, 171, 0) solid 2px;
     width: 100%;

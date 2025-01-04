@@ -1,5 +1,7 @@
 import { orderList } from '../data/data.js';
 
+
+
 // Function to populate the table with order details
 function populateOrderTable() {
     const tableBody = document.getElementById('orderTableBody');
