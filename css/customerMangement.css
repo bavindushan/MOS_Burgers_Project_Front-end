@@ -9,7 +9,7 @@
 
 .footer {
     background-color: #343a40;
-    position: fixed;
+    position: relative;
     color: white;
     padding: 20px 0;
     text-align: center;

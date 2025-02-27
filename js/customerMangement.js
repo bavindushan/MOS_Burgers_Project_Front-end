@@ -1,52 +1,65 @@
-import { customerArray } from '../data/data.js';
+console.log("wada wada");
+
+
 
 
 function populateCustomerTable() {
     const tableBody = document.querySelector('.table tbody');
     tableBody.innerHTML = ''; // Clear existing rows
 
-    customerArray.forEach(customer => {
-        const row = document.createElement('tr');
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+    };
 
-        // Create table cells for each customer
-        const idCell = document.createElement('td');
-        idCell.textContent = customer.customerID;
+    fetch("http://localhost:8080/customer/getAll", requestOptions)
+        .then(response => response.json()) // Convert response to JSON
+        .then(customers => {
+            customers.forEach(customer => {
+                const row = document.createElement('tr');
 
-        const nameCell = document.createElement('td');
-        nameCell.textContent = `${customer.firstName} ${customer.lastName}`;
+                // Create table cells for each customer
+                const idCell = document.createElement('td');
+                idCell.textContent = customer.id;
 
-        const emailCell = document.createElement('td');
-        emailCell.textContent = customer.email;
+                const nameCell = document.createElement('td');
+                nameCell.textContent = `${customer.firstName} ${customer.lastName}`;
 
-        const roleCell = document.createElement('td');
-        roleCell.textContent = customer.occupation;
+                const emailCell = document.createElement('td');
+                emailCell.textContent = customer.email;
 
-        const settingsCell = document.createElement('td');
-        settingsCell.innerHTML = `
-            <div class="d-flex">
-                <div class="col ad-st-icon">
-                    <img src="../assest/icon/eye.png" alt="View" onclick="viewCustomer(${customer.customerID})">
-                </div>
-                <div class="col ad-st-icon">
-                    <img src="../assest/icon/edit.png" alt="Edit" onclick="editCustomer(${customer.customerID})">
-                </div>
-                <div class="col ad-st-icon">
-                    <img src="../assest/icon/delete.png" alt="Delete" onclick="deleteCustomer(${customer.customerID})">
-                </div>
-            </div>
-        `;
+                const roleCell = document.createElement('td');
+                roleCell.textContent = customer.occupation;
 
-        // Append the cells to the row
-        row.appendChild(idCell);
-        row.appendChild(nameCell);
-        row.appendChild(emailCell);
-        row.appendChild(roleCell);
-        row.appendChild(settingsCell);
+                const settingsCell = document.createElement('td');
+                settingsCell.innerHTML = `
+                    <div class="d-flex">
+                        <div class="col ad-st-icon">
+                            <img src="../assest/icon/eye.png" alt="View" onclick="viewCustomer(${customer.id})">
+                        </div>
+                        <div class="col ad-st-icon">
+                            <img src="../assest/icon/edit.png" alt="Edit" onclick="editCustomer(${customer.id})">
+                        </div>
+                        <div class="col ad-st-icon">
+                            <img src="../assest/icon/delete.png" alt="Delete" onclick="deleteCustomer(${customer.id})">
+                        </div>
+                    </div>
+                `;
 
-        // Append the row to the table body
-        tableBody.appendChild(row);
-    });
+                // Append the cells to the row
+                row.appendChild(idCell);
+                row.appendChild(nameCell);
+                row.appendChild(emailCell);
+                row.appendChild(roleCell);
+                row.appendChild(settingsCell);
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error("Error fetching customer data:", error));
 }
+
 
 // Example function placeholders for view, edit, and delete actions
 function viewCustomer(customerID) {
