@@ -4,7 +4,7 @@ import { getAdminPassword, setAdminPassword } from '../data/data.js'; // Import 
 
 async function changeAdminPassword() {
     try {
-        // Step 1: Prompt admin to enter the current password
+        // Prompt admin to enter the current password
         const { value: currentPassword } = await Swal.fire({
             title: "Enter your current admin password",
             input: "password",
