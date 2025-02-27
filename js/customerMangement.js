@@ -215,8 +215,7 @@ function submitCustomerForm(customerID) {
                 text: "Customer details updated successfully.",
                 icon: "success"
             });
-            // Optionally, refresh or reload the customer list
-            // populateCustomerTable();
+            populateCustomerTable();
         })
         .catch((error) => {
             console.error('Error updating customer:', error);
@@ -231,12 +230,39 @@ function submitCustomerForm(customerID) {
 
 function deleteCustomer(customerID) {
     console.log(`Deleting customer with ID: ${customerID}`);
-    Swal.fire({
-        title: "This will be implement in the future!",
-        icon: "warning",
-        draggable: true
-    });
+    
+    const requestOptions = {
+        method: "DELETE",
+        redirect: "follow"
+    };
+
+    fetch(`http://localhost:8080/customer/delete/${customerID}`, requestOptions)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to delete customer");
+            }
+            return response.text();
+        })
+        .then((result) => {
+            console.log(result);
+            Swal.fire({
+                title: "Success!",
+                text: `Customer with ID ${customerID} has been deleted successfully.`,
+                icon: "success"
+            });
+            // Optionally, refresh or reload the customer list after deletion
+            populateCustomerTable();
+        })
+        .catch((error) => {
+            console.error(error);
+            Swal.fire({
+                title: "Error!",
+                text: `Failed to delete customer with ID ${customerID}. Please try again later.`,
+                icon: "error"
+            });
+        });
 }
+
 window.viewCustomer = viewCustomer;
 window.editCustomer = editCustomer;
 window.deleteCustomer = deleteCustomer;
