@@ -1,6 +1,4 @@
-import { productList } from '../data/data.js';
-import { getProducts } from '../data/data.js';
-import { customerArray } from '../data/data.js';
+
 
 // Get the element where you want to display the date and time
 const orderDateandTime = document.getElementById('orderDateandTime');
@@ -29,6 +27,225 @@ function getCurrentDateTime() {
     const formattedTime = currentDate.toLocaleTimeString();
     return `Date: ${formattedDate} Time: ${formattedTime}`;
 }
+
+//-----------------------------------------------------------------------------------------------------//
+
+async function addCustomer() {
+    console.log("Opening Add Customer Form");
+
+    const { value: formValues } = await Swal.fire({
+        html: `
+        <div class="card modal-content-custom">
+            <div class="card-header">
+                Add Customer Form
+                <button type="button" class="btn-close float-end" aria-label="Close" id="closeForm" onclick="Swal.close()"></button>
+            </div>
+            <div class="card-body add-customer-form">
+                <div class="d-flex justify-content-between gap-2">
+                    <input class="form-control form-edit mb-3" id="CFname" type="text" placeholder="First Name" required>
+                    <input class="form-control form-edit mb-3" id="CLemail" type="text" placeholder="Last Name" required>    
+                </div>
+                <div class="d-flex justify-content-between gap-3">
+                    <input class="form-control form-edit mb-3" id="Coccupation" type="text" placeholder="Occupation" required>
+                    <select class="form-select form-edit mb-3" id="Cgender" required>
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <input class="form-control form-edit mb-3" id="Clocation" type="text" placeholder="Location" required>
+                <input class="form-control form-edit mb-3" id="Cemail" type="email" placeholder="Email" required>
+                <input class="form-control form-edit mb-3" id="CPhoneNo" type="text" placeholder="Phone Number" required>
+                <textarea class="form-control form-edit mb-3 p-3 border-1 border-warning" id="CAdditional" placeholder="Additional Information"></textarea>
+                <div class="d-flex gap-2 float-end">
+                    <button class="btn btn-danger" id="cancelForm" onclick="handleCancel()">Cancel</button>
+                    <button class="btn btn-primary" id="submitCustomer" onclick="submitCustomerForm()">Add Customer</button>
+                </div>
+            </div>
+        </div>
+        `,
+        focusConfirm: false,
+        showConfirmButton: false
+    });
+}
+
+// Function to handle form submission
+async function submitCustomerForm() {
+    const firstName = document.getElementById("CFname").value.trim();
+    const lastName = document.getElementById("CLemail").value.trim();
+    const occupation = document.getElementById("Coccupation").value.trim();
+    const gender = document.getElementById("Cgender").value.trim();
+    const location = document.getElementById("Clocation").value.trim();
+    const email = document.getElementById("Cemail").value.trim();
+    const phoneNumber = document.getElementById("CPhoneNo").value.trim();
+    const additionalInfo = document.getElementById("CAdditional").value.trim();
+
+    // Email Validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        Swal.fire({ icon: "error", title: "Invalid Email", text: "Please enter a valid email address." });
+        return;
+    }
+
+    // Phone Number Validation (Sri Lankan format)
+    const phoneRegex = /^(?:07[01245678])[0-9]{7}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+        Swal.fire({ icon: "error", title: "Invalid Phone Number", text: "Please enter a valid Sri Lankan phone number (07XXXXXXXX)." });
+        return;
+    }
+
+    // Ensure required fields are filled
+    if (!firstName || !lastName || !email || !phoneNumber) {
+        Swal.fire({ icon: "error", title: "Missing Fields", text: "First Name, Last Name, Email, and Phone Number are required!" });
+        return;
+    }
+
+    // Prepare customer data
+    const customerData = {
+        firstName,
+        lastName,
+        occupation,
+        gender,
+        location,
+        email,
+        phoneNumber,
+        additionalInfo
+    };
+
+    // Send data to backend
+    try {
+        const response = await fetch("http://localhost:8080/customer/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(customerData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server Error: ${response.statusText}`);
+        }
+
+        const result = await response.text();
+        console.log("Customer added:", result);
+
+        Swal.fire({ icon: "success", title: "Customer Added", text: `${firstName} ${lastName} has been successfully added!` });
+
+    } catch (error) {
+        console.error("Error adding customer:", error);
+        Swal.fire({ icon: "error", title: "Error", text: "Failed to add customer. Please try again!" });
+    }
+}
+
+// Cancel button function
+function handleCancel() {
+    Swal.fire({ title: "Cancelled", icon: "error", text: "Customer addition cancelled." });
+}
+
+// Attach functions globally
+window.addCustomer = addCustomer;
+window.handleCancel = handleCancel;
+window.submitCustomerForm = submitCustomerForm;
+//-------------------------------------------------------------------------------------------------------//
+
+
+function searchCustomerByPhone() {
+    const phoneInput = document.getElementById('phoneNumber').value.trim();
+    const nameField = document.getElementById('customerName');
+    const locationField = document.getElementById('location');
+
+    // Check if the phone input is empty
+    if (phoneInput === '') {
+        nameField.value = '';
+        locationField.value = '';
+        return;
+    }
+
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+    };
+
+    fetch(`http://localhost:8080/customer/search-by-number/${phoneInput}`, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Customer not found!');
+            }
+            return response.json();
+        })
+        .then(customer => {
+            nameField.value = `${customer.firstName} ${customer.lastName}`;
+            locationField.value = customer.location;
+
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "Customer available!",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        })
+        .catch(error => {
+            nameField.value = '';
+            locationField.value = '';
+
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title: "Customer not exist!",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        });
+}
+
+window.searchCustomerByPhone = searchCustomerByPhone;
+
+//--------------------------------------------------------------------------------------------------//
+
+function searchItems(searchTerm) {
+    const productList = getProducts();  // Get products
+    const searchResults = [];
+
+    // Loop through product categories and items
+    for (let category in productList) {
+        productList[category].forEach((item) => {
+            // If the item name matches the search term, add it to the search results
+            if (item.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+                searchResults.push(item);
+            }
+        });
+    }
+
+    // Get the section where the items will be displayed
+    const resultContainer = document.querySelector(".Section .row");
+
+    // Clear previous results
+    resultContainer.innerHTML = "";
+
+    // Display the matching items
+    searchResults.forEach((item) => {
+        const card = `
+            <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card category-card">
+                    <img src="${item.image}" class="card-img-top" alt="${item.name}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">${item.name}</h5>
+                        <h6>Price(LKR): ${item.price.toFixed(2)}</h6>
+                        <button class="btn btn-primary add-to-cart" data-name="${item.name}" data-price="${item.price}">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        resultContainer.innerHTML += card;  // Append the card to the container
+    });
+}
+
+window.searchItems = searchItems;
+
 
 // Function to place an order
 function placeOrder(event) {
@@ -99,323 +316,127 @@ function cancelOrder(event) {
 window.cancelOrder = cancelOrder;
 window.placeOrder = placeOrder;
 
-function searchCustomerByPhone() {
-    const phoneInput = document.getElementById('phoneNumber').value.trim();
-    const nameField = document.getElementById('customerName');
-    const locationField = document.getElementById('location');
-
-    // Check if the phone input is empty
-    if (phoneInput === '') {
-        // Clear the other fields if phone number is empty
-        nameField.value = '';
-        locationField.value = '';
-        return;
-    }
-
-    // Find the customer by phone number
-    const customer = customerArray.find(cust => cust.phoneNumber.startsWith(phoneInput));
-
-    // Initialize the Toast object
-    const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-        }
-    });
-
-    if (customer) {
-        // Set customer name and location
-        nameField.value = `${customer.firstName} ${customer.lastName}`;
-        locationField.value = customer.location;
-
-        // Show success Toast
-        Toast.fire({
-            icon: "success",
-            title: "Customer available!"
-        });
-    } else {
-        // Clear fields if no customer is found
-        nameField.value = '';
-        locationField.value = '';
-
-        // Show error Toast
-        Toast.fire({
-            icon: "error",
-            title: "Customer not exist!"
-        });
-    }
-}
-window.searchCustomerByPhone = searchCustomerByPhone;
+//------------------------------------------------------------------------------------------------------//
 
 
 
-function searchItems(searchTerm) {
-    const productList = getProducts();  // Get products
-    const searchResults = [];
 
-    // Loop through product categories and items
-    for (let category in productList) {
-        productList[category].forEach((item) => {
-            // If the item name matches the search term, add it to the search results
-            if (item.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-                searchResults.push(item);
-            }
-        });
-    }
+function renderCategoryItemsByID(categoryID) {
+    const categoriesContainer = document.querySelector('.Section .row');
 
-    // Get the section where the items will be displayed
-    const resultContainer = document.querySelector(".Section .row");
+    // Fetch products from API
+    fetch("http://localhost:8080/product/getAll", {
+        method: "GET",
+        redirect: "follow"
+    })
+    .then((response) => response.json()) // Parse response as JSON
+    .then((data) => {
+        // Filter products based on categoryID
+        const filteredItems = data.filter(item => item.categoryId === categoryID);
 
-    // Clear previous results
-    resultContainer.innerHTML = "";
+        // Clear existing content
+        categoriesContainer.innerHTML = '';
 
-    // Display the matching items
-    searchResults.forEach((item) => {
-        const card = `
-            <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
-                <div class="card category-card">
-                    <img src="${item.image}" class="card-img-top" alt="${item.name}">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">${item.name}</h5>
-                        <h6>Price(LKR): ${item.price.toFixed(2)}</h6>
-                        <button class="btn btn-primary add-to-cart" data-name="${item.name}" data-price="${item.price}">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        resultContainer.innerHTML += card;  // Append the card to the container
-    });
-}
-
-window.searchItems = searchItems;
-
-
-async function addCustomer() {
-    console.log("um addCustomer");
-
-    const { value: formValues } = await Swal.fire({
-        html: `
-        <div class="card modal-content-custom">
-            <div class="card-header">
-                Add Customer Form
-                <button type="button" class="btn-close float-end" aria-label="Close" id="closeForm" onclick="Swal.close()"></button>
-            </div>
-            <div class="card-body add-customer-form">
-                <div class="d-flex justify-content-between gap-2">
-                    <input class="form-control form-edit mb-3" id="CFname" type="text" placeholder="First Name" required>
-                    <input class="form-control form-edit mb-3" id="CLemail" type="text" placeholder="Last Name" required>    
-                </div>
-                <div class="d-flex justify-content-between gap-3">
-                    <input class="form-control form-edit mb-3" id="Coccupation" type="text" placeholder="Occupation" required>
-                    <select class="form-select form-edit mb-3" id="Cgender" required>
-                        <option value="" disabled selected>Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <input class="form-control form-edit mb-3" id="Clocation" type="text" placeholder="Location" required>
-                <input class="form-control form-edit mb-3" id="Cemail" type="text" placeholder="Email" required>
-                <input class="form-control form-edit mb-3" id="CPhoneNo" type="text" placeholder="Phone Number" required>
-                <textarea class="form-control form-edit mb-3 p-3" id="CAdditional" placeholder="Additional Information"></textarea>
-                <div class="d-flex gap-2 float-end">
-                    <button class="btn btn-danger" id="cancelForm" onclick="handleCancel()">Cancel</button>
-                    <button class="btn btn-primary" id="submitCustomer" onclick="submitCustomerForm()">Add Customer</button>
-                </div>
-            </div>
-        </div>
-        `,
-        focusConfirm: false,
-        showConfirmButton: false, // Disable the OK button
-        preConfirm: () => {
-            const firstName = document.getElementById("CFname").value.trim();
-            const lastName = document.getElementById("CLemail").value.trim();
-            const occupation = document.getElementById("Coccupation").value.trim();
-            const gender = document.getElementById("Cgender").value.trim();
-            const location = document.getElementById("Clocation").value.trim();
-            const email = document.getElementById("Cemail").value.trim();
-            const phoneNumber = document.getElementById("CPhoneNo").value.trim();
-
-            // Validate inputs before returning
-            if (!firstName || !lastName || !email || !phoneNumber) {
-                Swal.showValidationMessage("First Name, Last Name, Email, and Phone Number are required!");
-                return null;
-            }
-
-            return { firstName, lastName, occupation, gender, location, email, phoneNumber };
-        }
-    });
-
-    if (formValues) {
-        // Proceed with showing success message after adding the customer
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-
-        Toast.fire({
-            icon: "success",
-            title: "Customer added successfully"
-        });
-
-        console.log("New Customer Data:", formValues);
-    }
-
-    function submitCustomerForm() {
-        const firstName = document.getElementById("CFname").value.trim();
-        const lastName = document.getElementById("CLemail").value.trim();
-        const occupation = document.getElementById("Coccupation").value.trim();
-        const gender = document.getElementById("Cgender").value.trim();
-        const location = document.getElementById("Clocation").value.trim();
-        const email = document.getElementById("Cemail").value.trim();
-        const phoneNumber = document.getElementById("CPhoneNo").value.trim();
-
-        // Validate inputs before processing
-        if (!firstName || !lastName || !email || !phoneNumber) {
-            Swal.showValidationMessage("First Name, Last Name, Email, and Phone Number are required!");
+        if (filteredItems.length === 0) {
+            console.warn(`No products found for categoryID: ${categoryId}`);
+            categoriesContainer.innerHTML = '<p class="text-center">No products available.</p>';
             return;
         }
 
-        const formData = {
-            firstName,
-            lastName,
-            occupation,
-            gender,
-            location,
-            email,
-            phoneNumber
-        };
-
-        console.log("Form Data to be processed:", formData);
-
-        // Here you can perform further processing (like saving the data to a server)
-
-        Swal.fire({
-            icon: "success",
-            title: "Customer Added",
-            text: `Customer ${firstName} ${lastName} added successfully!`
+        // Generate items dynamically
+        filteredItems.forEach((item) => {
+            const categoryCard = `
+                <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card category-card">
+                        <img src="${item.img}" class="card-img-top" alt="${item.name}">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">${item.name}</h5>
+                            <h6>Price (LKR): ${item.price.toFixed(2)}</h6>
+                            <button class="btn btn-primary add-to-cart" data-name="${item.name}" data-price="${item.price}">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>`;
+            categoriesContainer.innerHTML += categoryCard;
         });
-    }
+        attachAddToCartEvents();
+
+        // Attach event listeners for "Add to Cart" buttons (not integrating now)
+    })
+    .catch((error) => console.error("Error fetching products:", error));
 }
 
-function handleCancel() {
-    Swal.fire({
-        title: "Cancel!",
-        icon: "error",
-        draggable: true
-    });
-}
 
-// Attach the function to the global `window` object
-window.addCustomer = addCustomer;
-window.handleCancel = handleCancel;
-window.submitCustomerForm = submitCustomerForm;
+//-----------------------------------------heta balapan--------------------------------------------------------------//
 
-// Function to handle form submission
-function submitCustomerForm() {
-    const firstName = document.getElementById("CFname").value;
-    const lastName = document.getElementById("CLemail").value;
-    const occupation = document.getElementById("Coccupation").value;
-    const gender = document.getElementById("Cgender").value;
-    const location = document.getElementById("Clocation").value;
-    const email = document.getElementById("Cemail").value;
-    const phoneNumber = document.getElementById("CPhoneNo").value;
-    const additionalInfo = document.getElementById("CAdditional").value;
+// Global Order Object
+const order = {
+    items: [],
+    totalItems: 0,
+    subTotal: 0,
+    discount: 0
+};
 
-    // Add your logic to validate and save the customer data
-    if (firstName && lastName && email && phoneNumber) {
+function showOrderPopup() {
+    if (order.items.length === 0) {
         Swal.fire({
-            icon: 'success',
-            title: 'Customer Added',
-            text: `${firstName} ${lastName} has been successfully added!`
+            icon: "warning",
+            title: "Cart is Empty!",
+            text: "Please add items to the cart before viewing the order list."
         });
-    } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Please fill in all required fields!'
-        });
-    }
-}
-
-// Attach the function to the global `window` object
-window.addCustomer = addCustomer;
-
-
-function renderCategoryItems(category) {
-    const categoriesContainer = document.querySelector('.Section .row');
-    const items = productList[category];
-
-    if (!items) {
-        console.error(`Category ${category} not found in productList.`);
         return;
     }
 
-    // Clear existing content
-    categoriesContainer.innerHTML = '';
+    let orderTable = `
+        <table class="swal2-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price (LKR)</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>`;
 
-    // Generate items dynamically
-    items.forEach((item) => {
-        const categoryCard = `
-            <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
-                <div class="card category-card">
-                    <img src="${item.image}" class="card-img-top" alt="${item.name}">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">${item.name}</h5>
-                        <h6>Price(LKR): ${item.price.toFixed(2)}</h6>
-                        <button class="btn btn-primary add-to-cart " data-name="${item.name}" data-price="${item.price}">Add to Cart</button>
-                    </div>
-                </div>
-            </div>`;
-        categoriesContainer.innerHTML += categoryCard;
+    order.items.forEach((item) => {
+        orderTable += `
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.price.toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>${(item.price * item.quantity).toFixed(2)}</td>
+            </tr>`;
     });
 
-    // Attach event listeners for "Add to Cart" buttons
-    attachAddToCartEvents();
+    orderTable += `
+            </tbody>
+        </table>
+        <h5 class="mt-3">Total Price: ${(order.subTotal - order.discount).toFixed(2)} LKR</h5>`;
+
+    Swal.fire({
+        title: "Your Order List",
+        html: orderTable,
+        showCloseButton: true,
+        confirmButtonText: "Close"
+    });
 }
 
 function attachAddToCartEvents() {
     const addToCartButtons = document.querySelectorAll('.add-to-cart');
+    const cartIcon = document.querySelector('#cart-icon'); // Corrected selection
 
-    // Order state
-    const order = {
-        items: [],
-        totalItems: 0,
-        subTotal: 0,
-        discount: 0,
-        totalPrice: 0
-    };
-
-    // Update Order Card
     function updateOrderCard() {
-        // Select elements inside the `.set-total-price` section
-        const totalPriceElement = document.querySelector('.set-total-price h4'); // Target Total Price
-        const subTotalElement = document.querySelector('.set-total-price h5:nth-of-type(1)'); // Target Sub Total
-        const discountElement = document.querySelector('.set-total-price h5:nth-of-type(2)'); // Target Discount
+        const totalPriceElement = document.querySelector('.set-total-price h4');
+        const subTotalElement = document.querySelector('.set-total-price h5:nth-of-type(1)');
+        const discountElement = document.querySelector('.set-total-price h5:nth-of-type(2)');
+        const totalItemsElement = document.querySelector('.d-flex.justify-content-between.mt-3 h5');
 
-        // Select the Total Items element
-        const totalItemsElement = document.querySelector('.d-flex.justify-content-between.mt-3 h5'); // Target Total Items
-
-        // Update the text content of these elements
         totalPriceElement.textContent = `Total Price: ${(order.subTotal - order.discount).toFixed(2)}`;
         subTotalElement.textContent = `Sub Total: ${order.subTotal.toFixed(2)}`;
         discountElement.textContent = `Discount: ${order.discount.toFixed(2)}`;
         totalItemsElement.textContent = `Total Items: ${order.totalItems}`;
     }
 
-    // Add item to order
     function addToOrder(name, price, discount = 0) {
         const existingItem = order.items.find(item => item.name === name);
 
@@ -425,7 +446,6 @@ function attachAddToCartEvents() {
             order.items.push({ name, price, discount, quantity: 1 });
         }
 
-        // Recalculate order totals
         order.totalItems += 1;
         order.subTotal += price;
         order.discount += (price * discount) / 100;
@@ -433,7 +453,6 @@ function attachAddToCartEvents() {
         updateOrderCard();
     }
 
-    // Attach events to Add to Cart buttons
     addToCartButtons.forEach((button) => {
         button.addEventListener('click', (e) => {
             const name = e.target.getAttribute('data-name');
@@ -444,19 +463,28 @@ function attachAddToCartEvents() {
         });
     });
 
-    // Clear all button logic
+    if (cartIcon) {
+        cartIcon.addEventListener('click', showOrderPopup);
+    } else {
+        console.error("Cart icon not found!");
+    }
+
     const clearButton = document.querySelector('.order-section .btn-danger');
     clearButton.addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault();
         order.items = [];
         order.totalItems = 0;
         order.subTotal = 0;
         order.discount = 0;
-        order.totalPrice = 0;
 
         updateOrderCard();
     });
 }
+
+// Initialize the event listeners
+attachAddToCartEvents();
+
+//-------------------------------------------------------------------------------------------------------//
 
 
 // Attach click event listeners to navbar links
@@ -475,7 +503,7 @@ function setupCategoryNavigation() {
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
     // Render "Burgers" category by default
-    renderCategoryItems("Burgers");
+    renderCategoryItemsByID("B");
 
     // Set up category navigation
     setupCategoryNavigation();
