@@ -435,13 +435,13 @@ function attachAddToCartEvents() {
         totalItemsElement.textContent = `Total Items: ${order.totalItems}`;
     }
 
-    function addToOrder(id,name, price, discount = 0) {
+    function addToOrder(id, name, price, discount = 0) {
         const existingItem = order.items.find(item => item.name === name);
 
         if (existingItem) {
             existingItem.quantity += 1;
         } else {
-            order.items.push({id, name, price, discount, quantity: 1 });
+            order.items.push({ id, name, price, discount, quantity: 1 });
         }
 
         order.totalItems += 1;
@@ -450,7 +450,7 @@ function attachAddToCartEvents() {
 
         //print order array to debug console
         console.log(order);
-        
+
 
         updateOrderCard();
     }
@@ -462,7 +462,7 @@ function attachAddToCartEvents() {
             const price = parseFloat(e.target.getAttribute('data-price'));
             const discount = parseFloat(e.target.getAttribute('data-discount')) || 0;
 
-            addToOrder(id,name, price, discount);
+            addToOrder(id, name, price, discount);
         });
     });
 
@@ -490,9 +490,9 @@ function attachAddToCartEvents() {
 // Initialize the event listeners
 attachAddToCartEvents();
 
-//---------------------------------------------------mekaaaaa----------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------//
 
-// Function to get current date in YYYY-MM-DD format
+// Function to get the current date in YYYY-MM-DD format
 function getCurrentDate() {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -503,54 +503,83 @@ async function placeOrder(event) {
     event.preventDefault();
 
     const phoneInput = document.getElementById('phoneNumber').value.trim();
-    const nameField = document.getElementById('customerName').value;
-    const locationField = document.getElementById('location').value;
+    const nameField = document.getElementById('customerName').value.trim();
+    const locationField = document.getElementById('location').value.trim();
 
-    //get customer id 
-    var customer = searchCustomerByPhone(phoneInput);
-
-    if (!customer) {
-        console.error("Customer not found!");
+    if (!phoneInput || !nameField || !locationField) {
+        Swal.fire({
+            icon: "warning",
+            title: "Incomplete Details!",
+            text: "Please fill all required fields before placing the order."
+        });
         return;
     }
 
-    const customerId = customer.id;
+    console.log("Fetching customer ID...");
 
+    let customerId = null;
+    try {
+        const response = await fetch(`http://localhost:8080/customer/search-by-number/${phoneInput}`, {
+            method: "GET",
+            redirect: "follow"
+        });
 
-    // Calculate total price, items, and discount (implement logic accordingly)
+        if (!response.ok) throw new Error("Failed to fetch customer ID");
+
+        // ✅ Check if the response body exists and has content
+        const text = await response.text(); 
+        if (!text) throw new Error("Empty response from server");
+
+        const result = JSON.parse(text);
+        customerId = result.id;
+
+        console.log("Fetched Customer ID:", customerId);
+    } catch (error) {
+        console.error("Error fetching customer:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Customer Not Found!',
+            text: 'Invalid phone number or no customer data available.'
+        });
+        return;
+    }
+
+    console.log("Proceeding with order placement...");
+
+    // Calculate total price
     let totalItems = order.items.length;
     let subTotal = order.subTotal;
-    let discount = order.discount;
+    let discount = order.discount || 0;
     let totalPrice = subTotal - discount;
 
-    // Order details
     const orderDetails = {
-        customerId: customerId,
+        customerId: customerId, 
         date: getCurrentDate(),
         total: totalPrice
     };
 
     try {
-        // Place order request
         let orderResponse = await fetch("http://localhost:8080/order/add", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(orderDetails),
         });
 
-        let orderResult = await orderResponse.json();
-        console.log("Order Response:", orderResult);
-
         if (!orderResponse.ok) throw new Error("Order creation failed");
 
-        // Extract order ID from response
+        // ✅ Check if the response has content before parsing JSON
+        const orderText = await orderResponse.text();
+        if (!orderText) throw new Error("Empty order response from server");
+
+        let orderResult = JSON.parse(orderText);
+        console.log("Order Response:", orderResult);
+
         const orderId = orderResult.orderId;
 
-        // Send each order item
         for (const item of order.items) {
             const orderItem = {
                 orderId: orderId,
-                productId: item.productId,
+                productId: item.id,
                 qty: item.quantity,
                 price: item.price,
                 discount: item.discount
@@ -562,54 +591,71 @@ async function placeOrder(event) {
                 body: JSON.stringify(orderItem),
             });
 
-            let itemResult = await itemResponse.json();
-            console.log("Order Item Response:", itemResult);
-
             if (!itemResponse.ok) throw new Error("Order item submission failed");
+
+            // ✅ Check if order item response has content before parsing JSON
+            const itemText = await itemResponse.text();
+            if (!itemText) throw new Error("Empty order item response from server");
+
+            let itemResult = JSON.parse(itemText);
+            console.log("Order Item Response:", itemResult);
         }
 
-        // Show success message
         Swal.fire({
             icon: 'success',
             title: 'Order Placed Successfully!',
             text: `Order ID: ${orderId}`
         });
 
+        clearAll();
+
     } catch (error) {
         console.error("Order Placement Error:", error);
         Swal.fire({
             icon: 'error',
             title: 'Order Failed!',
-            text: 'An error occurred while placing the order.'
+            text: 'An error occurred while placing the order. Please try again later.'
         });
     }
 }
 
 
+// Function to clear order details
+function clearAll() {
+    order.items = [];
+    order.totalItems = 0;
+    order.subTotal = 0;
+    order.discount = 0;
+
+    // Clear displayed order details
+    updateOrderCard();
+}
+
 // Function to cancel an order
 function cancelOrder(event) {
-    // Prevent form submission
     event.preventDefault();
 
-    // Clear the input fields
+    // Clear input fields
     document.getElementById('phoneNumber').value = '';
     document.getElementById('customerName').value = '';
     document.getElementById('location').value = '';
     document.getElementById('email').value = '';
 
-    //call to clear all function
+    // Clear order details
+    clearAll();
 
-
-    // Optionally, show a cancel message
+    // Show cancel message
     Swal.fire({
         icon: 'error',
         title: 'Order Cancelled!',
-        text: 'The order has been cancelled.',
+        text: 'The order has been cancelled successfully.',
     });
-
 }
+
+// Attach functions to the window object for accessibility
 window.cancelOrder = cancelOrder;
 window.placeOrder = placeOrder;
+
 //-------------------------------------------------------------------------------------------------------//
 
 
