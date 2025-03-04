@@ -207,114 +207,104 @@ window.searchCustomerByPhone = searchCustomerByPhone;
 //--------------------------------------------------------------------------------------------------//
 
 function searchItems(searchTerm) {
-    const productList = getProducts();  // Get products
-    const searchResults = [];
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+    };
 
-    // Loop through product categories and items
-    for (let category in productList) {
-        productList[category].forEach((item) => {
-            // If the item name matches the search term, add it to the search results
-            if (item.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-                searchResults.push(item);
-            }
-        });
-    }
-
-    // Get the section where the items will be displayed
-    const resultContainer = document.querySelector(".Section .row");
-
-    // Clear previous results
-    resultContainer.innerHTML = "";
-
-    // Display the matching items
-    searchResults.forEach((item) => {
-        const card = `
-            <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
-                <div class="card category-card">
-                    <img src="${item.image}" class="card-img-top" alt="${item.name}">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">${item.name}</h5>
-                        <h6>Price(LKR): ${item.price.toFixed(2)}</h6>
-                        <button class="btn btn-primary add-to-cart" data-name="${item.name}" data-price="${item.price}">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        resultContainer.innerHTML += card;  // Append the card to the container
+    // Show loading indicator while fetching data
+    Swal.fire({
+        title: "Searching...",
+        text: "Please wait while we fetch the results.",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
     });
+
+    // Fetch all products from the API
+    fetch("http://localhost:8080/product/getAll", requestOptions)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse the response as JSON
+        })
+        .then((data) => {
+            // Close the loading indicator
+            Swal.close();
+
+            // Filter products based on the search term
+            const searchResults = data.filter((item) =>
+                item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            // Get the section where the items will be displayed
+            const resultContainer = document.querySelector(".Section .row");
+
+            // Clear previous results
+            resultContainer.innerHTML = "";
+
+            if (searchResults.length === 0) {
+                // Display a message if no results are found
+                Swal.fire({
+                    icon: "info",
+                    title: "No Results Found",
+                    text: `No products found for "${searchTerm}".`,
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+            // Display the matching items
+            searchResults.forEach((item) => {
+                const card = `
+                    <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="card category-card">
+                            <img src="${item.img}" class="card-img-top" alt="${item.name}">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">${item.name}</h5>
+                                <h6>Price(LKR): ${item.price.toFixed(2)}</h6>
+                                <button class="btn btn-primary add-to-cart" 
+                                        data-id="${item.id}" 
+                                        data-name="${item.name}" 
+                                        data-price="${item.price}" 
+                                        data-discount="${item.discount || 0}">
+                                        Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                resultContainer.innerHTML += card; // Append the card to the container
+            });
+
+            // Reattach event listeners for "Add to Cart" buttons
+            attachAddToCartEvents();
+        })
+        .catch((error) => {
+            // Close the loading indicator
+            Swal.close();
+
+            // Show error message
+            Swal.fire({
+                icon: "error",
+                title: "Search Failed",
+                text: "An error occurred while searching. Please try again later.",
+                confirmButtonText: "OK"
+            });
+
+            console.error("Error fetching search results:", error);
+
+            // Clear the results container
+            const resultContainer = document.querySelector(".Section .row");
+            resultContainer.innerHTML = `<p class="text-center">An error occurred while searching. Please try again later.</p>`;
+        });
 }
 
 window.searchItems = searchItems;
 
 
-// Function to place an order
-function placeOrder(event) {
-    // Array to store all placed orders
-    let orderArray = [];
-    // Prevent form submission
-    event.preventDefault();
-
-    const phoneInput = document.getElementById('phoneNumber').value.trim();
-    const nameField = document.getElementById('customerName').value;
-    const locationField = document.getElementById('location').value;
-    const emailField = document.getElementById('email').value;
-
-    // Order details
-    const orderDetails = {
-        orderId: 'P001', // You can generate dynamic order ID as needed
-        dateTime: getCurrentDateTime(),
-        phoneNumber: phoneInput,
-        customerName: nameField,
-        location: locationField,
-        additionalNote: emailField,
-        totalItems: 0, // Set your logic for calculating total items
-        totalPrice: 0, // Set your logic for calculating total price
-        subTotal: 0, // Set your logic for calculating subtotal
-        discount: 0, // Set your logic for calculating discount
-    };
-
-    // Add the order details to the orderArray
-    orderArray.push(orderDetails);
-
-    // Log the order array to the console
-    console.log('Order Array:', orderArray);
-
-    // Update the UI with the order details (optional)
-    document.getElementById('orderDateandTime').innerHTML = orderDetails.dateTime;
-    // You can update other UI fields as needed
-
-    // Optionally, show a success message
-    Swal.fire({
-        icon: 'success',
-        title: 'Order Placed Successfully!',
-        text: `Order ID: ${orderDetails.orderId}`,
-    });
-}
-
-// Function to cancel an order
-function cancelOrder(event) {
-    // Prevent form submission
-    event.preventDefault();
-
-    // Clear the input fields
-    document.getElementById('phoneNumber').value = '';
-    document.getElementById('customerName').value = '';
-    document.getElementById('location').value = '';
-    document.getElementById('email').value = '';
-
-    // Optionally, clear the UI updates
-    document.getElementById('orderDateandTime').innerHTML = '';
-
-    // Optionally, show a cancel message
-    Swal.fire({
-        icon: 'error',
-        title: 'Order Cancelled!',
-        text: 'The order has been cancelled.',
-    });
-
-}
-window.cancelOrder = cancelOrder;
-window.placeOrder = placeOrder;
 
 //------------------------------------------------------------------------------------------------------//
 
@@ -329,44 +319,49 @@ function renderCategoryItemsByID(categoryID) {
         method: "GET",
         redirect: "follow"
     })
-    .then((response) => response.json()) // Parse response as JSON
-    .then((data) => {
-        // Filter products based on categoryID
-        const filteredItems = data.filter(item => item.categoryId === categoryID);
+        .then((response) => response.json()) // Parse response as JSON
+        .then((data) => {
+            // Filter products based on categoryID
+            const filteredItems = data.filter(item => item.categoryId === categoryID);
 
-        // Clear existing content
-        categoriesContainer.innerHTML = '';
+            // Clear existing content
+            categoriesContainer.innerHTML = '';
 
-        if (filteredItems.length === 0) {
-            console.warn(`No products found for categoryID: ${categoryId}`);
-            categoriesContainer.innerHTML = '<p class="text-center">No products available.</p>';
-            return;
-        }
+            if (filteredItems.length === 0) {
+                console.warn(`No products found for categoryID: ${categoryID}`);
+                categoriesContainer.innerHTML = '<p class="text-center">No products available.</p>';
+                return;
+            }
 
-        // Generate items dynamically
-        filteredItems.forEach((item) => {
-            const categoryCard = `
+            // Generate items dynamically
+            filteredItems.forEach((item) => {
+                const categoryCard = `
                 <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
                     <div class="card category-card">
                         <img src="${item.img}" class="card-img-top" alt="${item.name}">
                         <div class="card-body text-center">
                             <h5 class="card-title">${item.name}</h5>
                             <h6>Price (LKR): ${item.price.toFixed(2)}</h6>
-                            <button class="btn btn-primary add-to-cart" data-name="${item.name}" data-price="${item.price}">Add to Cart</button>
+                            <button class="btn btn-primary add-to-cart" 
+                                data-id="${item.id}" 
+                                data-name="${item.name}" 
+                                data-price="${item.price}" 
+                                data-discount="${item.discount || 0}">
+                                Add to Cart
+                            </button>
                         </div>
                     </div>
                 </div>`;
-            categoriesContainer.innerHTML += categoryCard;
-        });
-        attachAddToCartEvents();
+                categoriesContainer.innerHTML += categoryCard;
+            });
+            attachAddToCartEvents();
 
-        // Attach event listeners for "Add to Cart" buttons (not integrating now)
-    })
-    .catch((error) => console.error("Error fetching products:", error));
+            // Attach event listeners for "Add to Cart" buttons (not integrating now)
+        })
+        .catch((error) => console.error("Error fetching products:", error));
 }
 
-
-//-----------------------------------------heta balapan meka--------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------//
 
 // Global Order Object
 const order = {
@@ -391,6 +386,7 @@ function showOrderPopup() {
             <thead>
                 <tr>
                     <th>Item</th>
+                    <th>Product ID</th>
                     <th>Price (LKR)</th>
                     <th>Qty</th>
                     <th>Total</th>
@@ -402,6 +398,7 @@ function showOrderPopup() {
         orderTable += `
             <tr>
                 <td>${item.name}</td>
+                <td>${item.id}</td>
                 <td>${item.price.toFixed(2)}</td>
                 <td>${item.quantity}</td>
                 <td>${(item.price * item.quantity).toFixed(2)}</td>
@@ -421,6 +418,7 @@ function showOrderPopup() {
     });
 }
 
+
 function attachAddToCartEvents() {
     const addToCartButtons = document.querySelectorAll('.add-to-cart');
     const cartIcon = document.querySelector('#cart-icon'); // Corrected selection
@@ -437,29 +435,34 @@ function attachAddToCartEvents() {
         totalItemsElement.textContent = `Total Items: ${order.totalItems}`;
     }
 
-    function addToOrder(name, price, discount = 0) {
+    function addToOrder(id,name, price, discount = 0) {
         const existingItem = order.items.find(item => item.name === name);
 
         if (existingItem) {
             existingItem.quantity += 1;
         } else {
-            order.items.push({ name, price, discount, quantity: 1 });
+            order.items.push({id, name, price, discount, quantity: 1 });
         }
 
         order.totalItems += 1;
         order.subTotal += price;
         order.discount += (price * discount) / 100;
 
+        //print order array to debug console
+        console.log(order);
+        
+
         updateOrderCard();
     }
 
     addToCartButtons.forEach((button) => {
         button.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
             const name = e.target.getAttribute('data-name');
             const price = parseFloat(e.target.getAttribute('data-price'));
             const discount = parseFloat(e.target.getAttribute('data-discount')) || 0;
 
-            addToOrder(name, price, discount);
+            addToOrder(id,name, price, discount);
         });
     });
 
@@ -470,20 +473,143 @@ function attachAddToCartEvents() {
     }
 
     const clearButton = document.querySelector('.order-section .btn-danger');
-    clearButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        order.items = [];
-        order.totalItems = 0;
-        order.subTotal = 0;
-        order.discount = 0;
-
-        updateOrderCard();
-    });
+    if (clearButton) {
+        clearButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            order.items = [];
+            order.totalItems = 0;
+            order.subTotal = 0;
+            order.discount = 0;
+            updateOrderCard();
+        });
+    } else {
+        console.error("Clear button not found!");
+    }
 }
 
 // Initialize the event listeners
 attachAddToCartEvents();
 
+//---------------------------------------------------mekaaaaa----------------------------------------------------//
+
+// Function to get current date in YYYY-MM-DD format
+function getCurrentDate() {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+}
+
+// Function to place an order
+async function placeOrder(event) {
+    event.preventDefault();
+
+    const phoneInput = document.getElementById('phoneNumber').value.trim();
+    const nameField = document.getElementById('customerName').value;
+    const locationField = document.getElementById('location').value;
+
+    //get customer id 
+    var customer = searchCustomerByPhone(phoneInput);
+
+    if (!customer) {
+        console.error("Customer not found!");
+        return;
+    }
+
+    const customerId = customer.id;
+
+
+    // Calculate total price, items, and discount (implement logic accordingly)
+    let totalItems = order.items.length;
+    let subTotal = order.subTotal;
+    let discount = order.discount;
+    let totalPrice = subTotal - discount;
+
+    // Order details
+    const orderDetails = {
+        customerId: customerId,
+        date: getCurrentDate(),
+        total: totalPrice
+    };
+
+    try {
+        // Place order request
+        let orderResponse = await fetch("http://localhost:8080/order/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderDetails),
+        });
+
+        let orderResult = await orderResponse.json();
+        console.log("Order Response:", orderResult);
+
+        if (!orderResponse.ok) throw new Error("Order creation failed");
+
+        // Extract order ID from response
+        const orderId = orderResult.orderId;
+
+        // Send each order item
+        for (const item of order.items) {
+            const orderItem = {
+                orderId: orderId,
+                productId: item.productId,
+                qty: item.quantity,
+                price: item.price,
+                discount: item.discount
+            };
+
+            let itemResponse = await fetch("http://localhost:8080/order-items/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderItem),
+            });
+
+            let itemResult = await itemResponse.json();
+            console.log("Order Item Response:", itemResult);
+
+            if (!itemResponse.ok) throw new Error("Order item submission failed");
+        }
+
+        // Show success message
+        Swal.fire({
+            icon: 'success',
+            title: 'Order Placed Successfully!',
+            text: `Order ID: ${orderId}`
+        });
+
+    } catch (error) {
+        console.error("Order Placement Error:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Order Failed!',
+            text: 'An error occurred while placing the order.'
+        });
+    }
+}
+
+
+// Function to cancel an order
+function cancelOrder(event) {
+    // Prevent form submission
+    event.preventDefault();
+
+    // Clear the input fields
+    document.getElementById('phoneNumber').value = '';
+    document.getElementById('customerName').value = '';
+    document.getElementById('location').value = '';
+    document.getElementById('email').value = '';
+
+    //call to clear all function
+
+
+    // Optionally, show a cancel message
+    Swal.fire({
+        icon: 'error',
+        title: 'Order Cancelled!',
+        text: 'The order has been cancelled.',
+    });
+
+}
+window.cancelOrder = cancelOrder;
+window.placeOrder = placeOrder;
 //-------------------------------------------------------------------------------------------------------//
 
 
