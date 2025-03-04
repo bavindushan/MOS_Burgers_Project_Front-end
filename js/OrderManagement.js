@@ -490,7 +490,7 @@ function attachAddToCartEvents() {
 // Initialize the event listeners
 attachAddToCartEvents();
 
-//-------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------hetath meka balahan------------------------------------------------------//
 
 // Function to get the current date in YYYY-MM-DD format
 function getCurrentDate() {
@@ -526,8 +526,7 @@ async function placeOrder(event) {
 
         if (!response.ok) throw new Error("Failed to fetch customer ID");
 
-        // ✅ Check if the response body exists and has content
-        const text = await response.text(); 
+        const text = await response.text();
         if (!text) throw new Error("Empty response from server");
 
         const result = JSON.parse(text);
@@ -553,7 +552,7 @@ async function placeOrder(event) {
     let totalPrice = subTotal - discount;
 
     const orderDetails = {
-        customerId: customerId, 
+        customerId: customerId,
         date: getCurrentDate(),
         total: totalPrice
     };
@@ -567,18 +566,36 @@ async function placeOrder(event) {
 
         if (!orderResponse.ok) throw new Error("Order creation failed");
 
-        // ✅ Check if the response has content before parsing JSON
         const orderText = await orderResponse.text();
         if (!orderText) throw new Error("Empty order response from server");
 
         let orderResult = JSON.parse(orderText);
         console.log("Order Response:", orderResult);
 
-        const orderId = orderResult.orderId;
+        // ✅ Fetch last order ID properly
+        const requestOptions = {
+            method: "GET",
+            redirect: "follow"
+        };
+
+        let response = await fetch("http://localhost:8080/order/getAll", requestOptions);
+
+        if (!response.ok) throw new Error("Order ID fetch failed");
+
+        const orderListText = await response.text();
+        if (!orderListText) throw new Error("Empty response from order list");
+
+        const orderList = JSON.parse(orderListText);
+
+        // ✅ Get last order ID and increment it
+        let lastOrderId = orderList.length > 0 ? orderList[orderList.length - 1].id : 0;
+        let newOrderId = lastOrderId + 1;
+
+        console.log("New Order ID:", newOrderId);
 
         for (const item of order.items) {
             const orderItem = {
-                orderId: orderId,
+                orderId: newOrderId,
                 productId: item.id,
                 qty: item.quantity,
                 price: item.price,
@@ -593,7 +610,6 @@ async function placeOrder(event) {
 
             if (!itemResponse.ok) throw new Error("Order item submission failed");
 
-            // ✅ Check if order item response has content before parsing JSON
             const itemText = await itemResponse.text();
             if (!itemText) throw new Error("Empty order item response from server");
 
@@ -604,7 +620,7 @@ async function placeOrder(event) {
         Swal.fire({
             icon: 'success',
             title: 'Order Placed Successfully!',
-            text: `Order ID: ${orderId}`
+            text: `Order ID: ${newOrderId}`
         });
 
         clearAll();
@@ -618,6 +634,8 @@ async function placeOrder(event) {
         });
     }
 }
+
+
 
 
 // Function to clear order details
