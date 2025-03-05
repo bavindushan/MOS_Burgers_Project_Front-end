@@ -569,33 +569,13 @@ async function placeOrder(event) {
         const orderText = await orderResponse.text();
         if (!orderText) throw new Error("Empty order response from server");
 
-        let orderResult = JSON.parse(orderText);
-        console.log("Order Response:", orderResult);
+        let orderId = JSON.parse(orderText); // Backend now returns the order ID
+        console.log("New Order ID:", orderId);
 
-        // ✅ Fetch last order ID properly
-        const requestOptions = {
-            method: "GET",
-            redirect: "follow"
-        };
-
-        let response = await fetch("http://localhost:8080/order/getAll", requestOptions);
-
-        if (!response.ok) throw new Error("Order ID fetch failed");
-
-        const orderListText = await response.text();
-        if (!orderListText) throw new Error("Empty response from order list");
-
-        const orderList = JSON.parse(orderListText);
-
-        // ✅ Get last order ID and increment it
-        let lastOrderId = orderList.length > 0 ? orderList[orderList.length - 1].id : 0;
-        let newOrderId = lastOrderId + 1;
-
-        console.log("New Order ID:", newOrderId);
-
+        // ✅ Submit order items using the returned order ID
         for (const item of order.items) {
             const orderItem = {
-                orderId: newOrderId,
+                orderId: orderId, // Use the returned ID
                 productId: item.id,
                 qty: item.quantity,
                 price: item.price,
@@ -610,17 +590,13 @@ async function placeOrder(event) {
 
             if (!itemResponse.ok) throw new Error("Order item submission failed");
 
-            const itemText = await itemResponse.text();
-            if (!itemText) throw new Error("Empty order item response from server");
-
-            let itemResult = JSON.parse(itemText);
-            console.log("Order Item Response:", itemResult);
+            console.log("Order Item Successfully Added");
         }
 
         Swal.fire({
             icon: 'success',
             title: 'Order Placed Successfully!',
-            text: `Order ID: ${newOrderId}`
+            text: `Order ID: ${orderId}`
         });
 
         clearAll();
@@ -638,15 +614,21 @@ async function placeOrder(event) {
 
 
 
+
 // Function to clear order details
 function clearAll() {
+    document.getElementById('phoneNumber').value = "";
+    document.getElementById('customerName').value = "";
+    document.getElementById('location').value = "";
+
+    
+    
     order.items = [];
-    order.totalItems = 0;
     order.subTotal = 0;
     order.discount = 0;
 
-    // Clear displayed order details
-    updateOrderCard();
+    console.log("Order data cleared.");
+
 }
 
 // Function to cancel an order
