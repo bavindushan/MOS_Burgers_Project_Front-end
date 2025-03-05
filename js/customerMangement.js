@@ -119,26 +119,26 @@ function editCustomer(customerID) {
                     <div class="card modal-content-custom">
                         <div class="card-header">
                             Edit Customer Form
-                            <button type="button" class="btn-close float-end" aria-label="Close" id="closeForm"></button>
+                            <button type="button" class="btn-close float-end" aria-label="Close" id="closeForm" onclick="Swal.close()"></button>
                         </div>
                         <div class="card-body add-customer-form">
                             <div class="d-flex justify-content-between gap-2">
-                                <input class="form-control form-edit mb-3 border-black" id="CFname" type="text" placeholder="First Name" required>
-                                <input class="form-control form-edit mb-3 border-black" id="CLemail" type="text" placeholder="Last Name" required>
+                                <input class="form-control form-edit mb-3 border-warning" id="CFname" type="text" placeholder="First Name" required>
+                                <input class="form-control form-edit mb-3 border-warning" id="CLemail" type="text" placeholder="Last Name" required>
                             </div>
                             <div class="d-flex justify-content-between gap-3">
-                                <input class="form-control form-edit mb-3 border-black" id="Coccupation" type="text" placeholder="Occupation" required>
-                                <select class="form-select form-edit mb-3 border-black" id="Cgender" required>
+                                <input class="form-control form-edit mb-3 border-warning" id="Coccupation" type="text" placeholder="Occupation" required>
+                                <select class="form-select form-edit mb-3 border-warning" id="Cgender" required>
                                     <option value="" disabled selected>Select Gender</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-                            <input class="form-control form-edit mb-3 border-black" id="Clocation" type="text" placeholder="Location" required>
-                            <input class="form-control form-edit mb-3 border-black" id="Cemail" type="text" placeholder="Email" required>
-                            <input class="form-control form-edit mb-3 border-black" id="CPhoneNo" type="text" placeholder="Phone Number" required>
-                            <textarea class="form-control form-edit mb-3 p-3 border-black" id="CAdditional" placeholder="Additional Information"></textarea>
+                            <input class="form-control form-edit mb-3 border-warning" id="Clocation" type="text" placeholder="Location" required>
+                            <input class="form-control form-edit mb-3 border-warning" id="Cemail" type="text" placeholder="Email" required>
+                            <input class="form-control form-edit mb-3 border-warning" id="CPhoneNo" type="text" placeholder="Phone Number" required>
+                            <textarea class="form-control form-edit mb-3 p-3 border-warning" id="CAdditional" placeholder="Additional Information"></textarea>
                             <div class="d-flex gap-2 float-end">
                                 <button class="btn btn-danger" id="cancelForm">Cancel</button>
                                 <button class="btn btn-primary" id="submitCustomer">Update Customer</button>
