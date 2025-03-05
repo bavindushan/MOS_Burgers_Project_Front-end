@@ -107,24 +107,58 @@ window.changeAdminPassword = changeAdminPassword;
 export { changeAdminPassword };
 
 
-//----------------------- Display Annual Sales Summary --------------------------------
-const ctx = document.getElementById('myChart');
+// Function to fetch order data and update the chart
+async function fetchAndDisplayAnnualSales() {
+    try {
+        const requestOptions = {
+            method: "GET",
+            redirect: "follow"
+        };
 
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        datasets: [{
-            label: 'Annual Sales Summary',
-            data: [12, 19, 25, 5, 27, 39, 22, 23, 45, 56, 66, 78],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+        const response = await fetch("http://localhost:8080/order/getAll", requestOptions);
+        const orders = await response.json(); // Convert response to JSON
+
+        // Initialize an array for monthly sales (Index 0 = January, Index 11 = December)
+        const monthlySales = new Array(12).fill(0);
+
+        // Process fetched order data
+        orders.forEach(order => {
+            const orderDate = new Date(order.date);
+            const monthIndex = orderDate.getMonth(); // Get month (0 for Jan, 11 for Dec)
+            monthlySales[monthIndex] += order.total; // Sum sales for each month
+        });
+
+        // Display Chart
+        const ctx = document.getElementById('myChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [
+                    'January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ],
+                datasets: [{
+                    label: 'Annual Sales Summary',
+                    data: monthlySales,
+                    borderWidth: 2,
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    fill: true
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
-        }
+        });
+
+    } catch (error) {
+        console.error("Error fetching order data:", error);
     }
-});
+}
+
+// Call the function to fetch data and display the chart
+fetchAndDisplayAnnualSales();
