@@ -1,10 +1,22 @@
 console.log("Hello, I am the admin dashboard");
 
-import { getAdminPassword, setAdminPassword } from '../data/data.js'; // Import methods from data.js
 
 async function changeAdminPassword() {
     try {
-        // Prompt admin to enter the current password
+        // Step 1: Get the current admin password from API
+        const requestOptions = {
+            method: "GET",
+            redirect: "follow"
+        };
+
+        const response = await fetch("http://localhost:8080/admin/getAll", requestOptions);
+        const adminData = await response.json();
+
+        // Assuming only one admin exists
+        const admin = adminData[0];
+        const currentStoredPassword = admin.password;
+
+        // Step 2: Prompt admin to enter the current password
         const { value: currentPassword } = await Swal.fire({
             title: "Enter your current admin password",
             input: "password",
@@ -18,7 +30,7 @@ async function changeAdminPassword() {
         });
 
         // If no password entered or incorrect, exit early
-        if (!currentPassword || currentPassword !== getAdminPassword()) {
+        if (!currentPassword || currentPassword !== currentStoredPassword) {
             await Swal.fire({
                 icon: "error",
                 title: "Error",
@@ -27,7 +39,7 @@ async function changeAdminPassword() {
             return;
         }
 
-        // Step 2: Prompt admin to enter a new password
+        // Step 3: Prompt admin to enter a new password
         const { value: newPassword } = await Swal.fire({
             title: "Enter your new admin password",
             input: "password",
@@ -50,10 +62,27 @@ async function changeAdminPassword() {
             return;
         }
 
-        // Step 3: Change the admin password using setAdminPassword
-        setAdminPassword(newPassword);
+        // Step 4: Update admin password in the database
+        const updateHeaders = new Headers();
+        updateHeaders.append("Content-Type", "application/json");
 
-        // Step 4: Notify success
+        const raw = JSON.stringify({
+            id: admin.id,  // Use the actual admin ID
+            name: admin.name,
+            password: newPassword
+        });
+
+        const updateOptions = {
+            method: "PUT",
+            headers: updateHeaders,
+            body: raw,
+            redirect: "follow"
+        };
+
+        const updateResponse = await fetch("http://localhost:8080/admin/update", updateOptions);
+        const updateResult = await updateResponse.text();
+
+        // Step 5: Notify success
         await Swal.fire({
             icon: "success",
             title: "Success",
@@ -76,6 +105,7 @@ async function changeAdminPassword() {
 window.changeAdminPassword = changeAdminPassword;
 
 export { changeAdminPassword };
+
 
 //----------------------- Display Annual Sales Summary --------------------------------
 const ctx = document.getElementById('myChart');
