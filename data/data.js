@@ -65,12 +65,13 @@ let adminPassword = ['1234'];
 //             discount: 16, 
 //             image: "../assest/img/Burger-Category/Double-Cheese Burger.webp" 
 //         },
-//         { 
+//         { *************************************************************************
 //             itemCode: "B10010",
 //             name: "Paneer Burger", 
 //             price: 200.00, 
 //             discount: 16,
-//             image: "../assest/img/Burger-Category/Paneer Burger.webp" 
+//             image: "../assest/img/Burger-Category/Paneer Burger.webp"
+//         *****************************************************************************
 //         }
 //     ],
 //     Submarines: [
