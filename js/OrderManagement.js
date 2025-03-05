@@ -493,7 +493,7 @@ function attachAddToCartEvents() {
 // Initialize the event listeners
 attachAddToCartEvents();
 
-//-------------------------------------------------hetath meka balahan------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------//
 
 // Function to get the current date in YYYY-MM-DD format
 function getCurrentDate() {
@@ -575,7 +575,7 @@ async function placeOrder(event) {
         let orderId = JSON.parse(orderText); // Backend now returns the order ID
         console.log("New Order ID:", orderId);
 
-        // ✅ Submit order items using the returned order ID
+        // Submit order items using the returned order ID
         for (const item of order.items) {
             const orderItem = {
                 orderId: orderId, // Use the returned ID
@@ -625,7 +625,7 @@ function clearAll() {
     document.getElementById("subTotal").value = "";
     document.getElementById("discount").value = "";
 
-    
+
     order.items = [];
     order.subTotal = 0;
     order.discount = 0;
@@ -648,7 +648,7 @@ function cancelOrder(event) {
     document.getElementById("subTotal").value = "";
     document.getElementById("discount").value = "";
 
-    
+
     order.items = [];
     order.subTotal = 0;
     order.discount = 0;
@@ -666,6 +666,36 @@ function cancelOrder(event) {
 // Attach functions to the window object for accessibility
 window.cancelOrder = cancelOrder;
 window.placeOrder = placeOrder;
+
+//-------------------------------------------set next orderID------------------------------------------------------------//
+
+// //Function to set  next order ID
+// function setNextOrderId() {
+//     const requestOptions = {
+//         method: "GET",
+//         redirect: "follow"
+//     };
+
+//     fetch("http://localhost:8080/order/getAll", requestOptions)
+//         .then(response => response.json()) // Parse response as JSON
+//         .then(orders => {
+//             let nextOrderId = 1; // Default ID if no orders exist
+
+//             if (orders.length > 0) {
+//                 const maxId = Math.max(...orders.map(order => order.id)); // Find max order ID
+//                 nextOrderId = maxId + 1; //  Increment for next order
+//             }
+
+//             const orderIdField = document.getElementById("orderId");
+//             if (orderIdField) {
+//                 orderIdField.value = nextOrderId; //  Set the next order ID
+//             } else {
+//                 console.error("Element #orderId not found in the DOM!");
+//             }
+//         })
+//         .catch(error => console.error("Error fetching orders:", error));
+// }
+
 
 //-------------------------------------------------------------------------------------------------------//
 
@@ -685,7 +715,7 @@ function setupCategoryNavigation() {
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
-    // Render "Burgers" category by default
+    // Render Burgers category by default
     renderCategoryItemsByID("B");
 
     // Set up category navigation
