@@ -14,7 +14,7 @@ function updateDateTime() {
     const formattedTime = currentDate.toLocaleTimeString(); // Default format: HH:MM:SS AM/PM
 
     // Update the content of the element
-    orderDateandTime.innerHTML = `Date: ${formattedDate} Time: ${formattedTime}`;
+    orderDateandTime.innerHTML = `Date: ${formattedDate} <br> Time: ${formattedTime}`;
 }
 
 // Call the function to set the initial date and time
@@ -702,16 +702,17 @@ window.placeOrder = placeOrder;
 
 // Attach click event listeners to navbar links
 function setupCategoryNavigation() {
-    const navLinks = document.querySelectorAll('.category-link'); // Only target category links
+    const navLinks = document.querySelectorAll('.category-link');
 
     navLinks.forEach((link) => {
         link.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default anchor behavior
-            const category = link.textContent.trim(); // Use text content to determine the category
-            renderCategoryItems(category);
+            e.preventDefault(); // Prevent default link behavior
+            const category = link.getAttribute('data-category'); //Get category code
+            renderCategoryItemsByID(category); // Use function
         });
     });
 }
+
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
