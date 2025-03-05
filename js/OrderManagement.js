@@ -152,11 +152,13 @@ function searchCustomerByPhone() {
     const phoneInput = document.getElementById('phoneNumber').value.trim();
     const nameField = document.getElementById('customerName');
     const locationField = document.getElementById('location');
+    const additionalNote = document.getElementById('email');
 
     // Check if the phone input is empty
     if (phoneInput === '') {
         nameField.value = '';
         locationField.value = '';
+        additionalNote.value = '';
         return;
     }
 
@@ -175,6 +177,7 @@ function searchCustomerByPhone() {
         .then(customer => {
             nameField.value = `${customer.firstName} ${customer.lastName}`;
             locationField.value = customer.location;
+            additionalNote.value = customer.additionalInfo;
 
             Swal.fire({
                 toast: true,
@@ -611,17 +614,17 @@ async function placeOrder(event) {
     }
 }
 
-
-
-
-
 // Function to clear order details
 function clearAll() {
     document.getElementById('phoneNumber').value = "";
     document.getElementById('customerName').value = "";
     document.getElementById('location').value = "";
 
-    
+    document.getElementById("totalItems").value = "";
+    document.getElementById("totalPrice").value = "";
+    document.getElementById("subTotal").value = "";
+    document.getElementById("discount").value = "";
+
     
     order.items = [];
     order.subTotal = 0;
@@ -635,14 +638,22 @@ function clearAll() {
 function cancelOrder(event) {
     event.preventDefault();
 
-    // Clear input fields
-    document.getElementById('phoneNumber').value = '';
-    document.getElementById('customerName').value = '';
-    document.getElementById('location').value = '';
-    document.getElementById('email').value = '';
-
     // Clear order details
-    clearAll();
+    document.getElementById('phoneNumber').value = "";
+    document.getElementById('customerName').value = "";
+    document.getElementById('location').value = "";
+
+    document.getElementById("totalItems").value = "";
+    document.getElementById("totalPrice").value = "";
+    document.getElementById("subTotal").value = "";
+    document.getElementById("discount").value = "";
+
+    
+    order.items = [];
+    order.subTotal = 0;
+    order.discount = 0;
+
+    console.log("Order data cleared.");
 
     // Show cancel message
     Swal.fire({
