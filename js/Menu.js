@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetchProducts(); // Call function when page loads
-    setupCategoryNavigation(); // Call category navigation setup on page load
+    fetchProducts(); // Load products on page load
+    setupCategoryNavigation(); // Initialize category navigation
 });
 
+// Fetch all products
 function fetchProducts() {
     const requestOptions = {
         method: "GET",
@@ -16,19 +17,19 @@ function fetchProducts() {
             const container = document.getElementById("product-container");
             container.innerHTML = ""; // Clear existing content
 
-            products.forEach(product => {
+            products.forEach(item => {
                 const productHTML = `
                     <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
                         <div class="card category-card">
-                            <img src="${product.img}" class="card-img-top" alt="${product.name}">
+                            <img src="${item.img}" class="card-img-top" alt="${item.name}">
                             <div class="card-body text-center">
-                                <h5 class="card-title">${product.name}</h5>
-                                <h6>Price(LKR): ${product.price.toFixed(2)}</h6>
+                                <h5 class="card-title">${item.name}</h5>
+                                <h6>Price (LKR): ${parseFloat(item.price).toFixed(2)}</h6>
                             </div>
                             <div class="setting-icon">
-                                <img src="../assest/icon/eye.png" alt="View">
-                                <img src="../assest/icon/edit.png" alt="Edit">
-                                <img src="../assest/icon/delete.png" alt="Delete">
+                                <img src="../assest/icon/eye.png" alt="View" onclick="viewProduct('${item.id}')">
+                                <img src="../assest/icon/edit.png" alt="Edit" onclick="updateProduct('${item.id}', '${item.name}', '${item.price}', '${item.categoryId}','${item.discount}', '${item.img}')">
+                                <img src="../assest/icon/delete.png" alt="Delete" onclick="deleteProduct('${item.id}')">
                             </div>
                         </div>
                     </div>
@@ -36,66 +37,163 @@ function fetchProducts() {
                 container.innerHTML += productHTML;
             });
         })
-        .catch(error => console.error("Error fetching products:", error));
+        .catch(error => Swal.fire("Error", "Failed to fetch products!", "error"));
 }
 
-function renderCategoryItemsByID(categoryID) {
-    const categoriesContainer = document.querySelector('#product-container'); // Fixed selector
+function viewProduct(productId) {
+    fetch(`http://localhost:8080/product/searchById/${productId}`, {
+        method: "GET",
+        redirect: "follow"
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to fetch product details");
+        }
+        return response.json();
+    })
+    .then(item => {
+        Swal.fire({
+            title: item.name,
+            html: `
+                <b>ID:</b> ${item.id} <br>
+                <b>Category:</b> ${item.categoryId} <br>
+                <b>Price:</b> LKR ${parseFloat(item.price).toFixed(2)} <br>
+                <b>Discount:</b>  ${parseFloat(item.discount).toFixed(2)} <br>
+                <img src="${item.img}" width="100px">
+            `,
+            icon: "info"
+        });
+    })
+    .catch(error => Swal.fire("Error", error.message, "error"));
+}
 
-    // Fetch products from API
+// Update product
+function updateProduct(productId, name, price, categoryId, discount, img) {
+    console.log(productId, name, price, categoryId, discount, img);
+    
+    Swal.fire({
+        title: "Update Product",
+        html: `
+            <input id="swal-name" class="swal2-input" placeholder="Product Name" value="${name}">
+            <input id="swal-price" class="swal2-input" type="number" placeholder="Price" value="${price}">
+            <input id="swal-category" class="swal2-input" placeholder="Category ID" value="${categoryId}">
+            <input id="swal-discount" class="swal2-input" placeholder="Discount" value="${discount}">
+            <input id="swal-img" class="swal2-input" placeholder="Image URL" value="${img}">
+        `,
+        showCancelButton: true,
+        confirmButtonText: "Update",
+        cancelButtonText: "Cancel",
+        preConfirm: () => {
+            return {
+                name: document.getElementById("swal-name").value,
+                price: parseFloat(document.getElementById("swal-price").value) || 0,
+                categoryId: document.getElementById("swal-category").value,
+                img: document.getElementById("swal-img").value
+            };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const updatedProduct = {
+                id: productId,
+                ...result.value
+            };
+
+            fetch("http://localhost:8080/product/update", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedProduct),
+                redirect: "follow"
+            })
+            .then(response => response.text())
+            .then(() => {
+                Swal.fire("Success", "Product updated successfully!", "success");
+                fetchProducts(); // Refresh products
+            })
+            .catch(error => Swal.fire("Error", "Failed to update product!", "error"));
+        }
+    });
+}
+
+// Delete product
+function deleteProduct(productId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This product will be permanently deleted!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`http://localhost:8080/product/delete/${productId}`, {
+                method: "DELETE",
+                redirect: "follow"
+            })
+            .then(response => response.text())
+            .then(() => {
+                Swal.fire("Deleted!", "Product has been deleted.", "success");
+                fetchProducts(); // Refresh products
+            })
+            .catch(error => Swal.fire("Error", "Failed to delete product!", "error"));
+        }
+    });
+}
+
+// Render products by category
+function renderCategoryItemsByID(categoryID) {
+    const categoriesContainer = document.querySelector('#product-container');
+
     fetch("http://localhost:8080/product/getAll", {
         method: "GET",
         redirect: "follow"
     })
-        .then(response => response.json()) // Parse response as JSON
-        .then(data => {
-            console.log("Fetched Data:", data); // Debugging API response
+    .then(response => response.json())
+    .then(data => {
+        console.log("Fetched Data:", data);
 
-            // Filter products based on categoryID
-            const filteredItems = data.filter(item => item.categoryId === categoryID);
+        const filteredItems = data.filter(item => item.categoryId === categoryID);
 
-            // Clear existing content
-            categoriesContainer.innerHTML = '';
+        categoriesContainer.innerHTML = '';
 
-            if (filteredItems.length === 0) {
-                console.warn(`No products found for categoryID: ${categoryID}`);
-                categoriesContainer.innerHTML = '<p class="text-center">No products available.</p>';
-                return;
-            }
+        if (filteredItems.length === 0) {
+            console.warn(`No products found for categoryID: ${categoryID}`);
+            categoriesContainer.innerHTML = '<p class="text-center">No products available.</p>';
+            return;
+        }
 
-            // Generate items dynamically
-            filteredItems.forEach(item => {
-                const categoryCard = `
+        filteredItems.forEach(item => {
+            const categoryCard = `
                 <div data-aos="zoom-in" class="col-lg-3 col-md-4 col-sm-6">
                     <div class="card category-card">
                         <img src="${item.img}" class="card-img-top" alt="${item.name}">
                         <div class="card-body text-center">
                             <h5 class="card-title">${item.name}</h5>
-                            <h6>Price (LKR): ${item.price.toFixed(2)}</h6>
+                            <h6>Price (LKR): ${parseFloat(item.price).toFixed(2)}</h6>
                         </div>
                         <div class="setting-icon">
-                            <img src="../assest/icon/eye.png" alt="View">
-                            <img src="../assest/icon/edit.png" alt="Edit">
-                            <img src="../assest/icon/delete.png" alt="Delete">
+                            <img src="../assest/icon/eye.png" alt="View" onclick="viewProduct('${item.id}')">
+                            <img src="../assest/icon/edit.png" alt="Edit" onclick="updateProduct('${item.id}', '${item.name}', '${item.price}', '${item.categoryId}', '${item.img}')">
+                            <img src="../assest/icon/delete.png" alt="Delete" onclick="deleteProduct('${item.id}')">
                         </div>
                     </div>
                 </div>
-                `;
-                categoriesContainer.innerHTML += categoryCard;
-            });
-        })
-        .catch(error => console.error("Error fetching products:", error));
+            `;
+            categoriesContainer.innerHTML += categoryCard;
+        });
+    })
+    .catch(error => console.error("Error fetching products:", error));
 }
 
+// Setup category navigation
 function setupCategoryNavigation() {
     const navLinks = document.querySelectorAll('.category-link');
 
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default link behavior
-            const category = link.getAttribute('data-category'); // Get category code
-            console.log("Selected Category:", category); // Debugging
-            renderCategoryItemsByID(category); // Use function
+            e.preventDefault();
+            const category = link.getAttribute('data-category');
+            console.log("Selected Category:", category);
+            renderCategoryItemsByID(category);
         });
     });
 }
