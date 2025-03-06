@@ -1,43 +1,46 @@
-import { orderList } from '../data/data.js';
-
-
-
 // Function to populate the table with order details
-function populateOrderTable() {
-    const tableBody = document.getElementById('orderTableBody');
+function populateCustomerTable() {
+    const tableBody = document.querySelector('.table tbody');
     tableBody.innerHTML = ''; // Clear existing rows
 
-    orderList.forEach(order => {
-        const row = document.createElement('tr');
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+    };
 
-        // Create the table cells for each order
-        const customerIdCell = document.createElement('td');
-        customerIdCell.textContent = order.customerId;
+    fetch("http://localhost:8080/customer/getAll", requestOptions)
+        .then(response => response.json()) // Convert response to JSON
+        .then(customers => {
+            customers.forEach(customer => {
+                const row = document.createElement('tr');
 
-        const customerNameCell = document.createElement('td');
-        customerNameCell.textContent = order.customerName;
+                // Create table cells for each customer
+                const idCell = document.createElement('td');
+                idCell.textContent = customer.id;
 
-        const dateCell = document.createElement('td');
-        dateCell.textContent = order.date;
+                const nameCell = document.createElement('td');
+                nameCell.textContent = `${customer.firstName} ${customer.lastName}`;
 
-        const totalAmountCell = document.createElement('td');
-        totalAmountCell.textContent = order.totalAmount.toFixed(2); // Formatting to two decimal places
+                const emailCell = document.createElement('td');
+                emailCell.textContent = customer.email;
 
-        // Append the cells to the row
-        row.appendChild(customerIdCell);
-        row.appendChild(customerNameCell);
-        row.appendChild(dateCell);
-        row.appendChild(totalAmountCell);
+                const roleCell = document.createElement('td');
+                roleCell.textContent = customer.occupation;
 
-        // Append the row to the table body
-        tableBody.appendChild(row);
-    });
+                // Append the cells to the row
+                row.appendChild(idCell);
+                row.appendChild(nameCell);
+                row.appendChild(emailCell);
+                row.appendChild(roleCell);
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error("Error fetching customer data:", error));
 }
 
-// Call the function to populate the table when the page loads
-window.onload = function() {
-    populateOrderTable();
-};
+
 
 
 
@@ -96,3 +99,8 @@ async function fetchAndDisplayAnnualSales() {
 
 // Call the function to fetch data and display the chart
 fetchAndDisplayAnnualSales();
+
+// Initialize table population on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+    populateCustomerTable();
+});
