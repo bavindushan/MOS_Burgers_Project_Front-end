@@ -1,41 +1,133 @@
+// Function to fetch the orders from the API
+async function fetchOrders() {
+    try {
+        const response = await fetch('http://localhost:8080/order/getAll');
+        const orders = await response.json(); // Parse JSON response
+        return orders; // Return orders data
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        return [];
+    }
+}
+
+// Function to generate the PDF
+async function generateReport() {
+    const orders = await fetchOrders(); // Fetch orders from the API
+
+    if (orders.length === 0) {
+        alert('No orders found or there was an error fetching data.');
+        return;
+    }
+
+    // Format data into the table format pdfmake expects
+    const tableBody = [
+        ['Order ID', 'Date', 'Total', 'Customer ID']
+    ];
+
+    // Loop through the orders and ensure each field is defined
+    orders.forEach(order => {
+        // Check if any required field is missing or invalid
+        const orderId = order.id || 'N/A';
+        const orderDate = order.date || 'N/A';
+        const orderTotal = order.total || 'N/A';
+        const customerId = order.customer_id || 'N/A';
+
+        // Push the order data into the table
+        tableBody.push([orderId, orderDate, orderTotal, customerId]);
+    });
+
+    // PDF document definition
+    const docDefinition = {
+        content: [
+            { text: 'Order Report', style: 'header' },
+            {
+                table: {
+                    body: tableBody
+                }
+            }
+        ],
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 0, 0, 10]
+            }
+        }
+    };
+
+    // Generate and download the PDF
+    pdfMake.createPdf(docDefinition).download('order_report.pdf');
+}
+
+// Attach click event listener to the icon
+document.getElementById('generatePdf').addEventListener('click', generateReport);
+
+
+
 // Function to populate the table with order details
 function populateCustomerTable() {
-    const tableBody = document.querySelector('.table tbody');
+    const tableBody = document.getElementById('orderTableBody');
     tableBody.innerHTML = ''; // Clear existing rows
 
-    const requestOptions = {
+    const customerRequestOptions = {
         method: "GET",
         redirect: "follow"
     };
 
-    fetch("http://localhost:8080/customer/getAll", requestOptions)
-        .then(response => response.json()) // Convert response to JSON
+    const orderRequestOptions = {
+        method: "GET",
+        redirect: "follow"
+    };
+
+    // Fetch customer data
+    fetch("http://localhost:8080/customer/getAll", customerRequestOptions)
+        .then(response => response.json())
         .then(customers => {
-            customers.forEach(customer => {
-                const row = document.createElement('tr');
+            // Fetch order data
+            fetch("http://localhost:8080/order/getAll", orderRequestOptions)
+                .then(response => response.json())
+                .then(orders => {
+                    // Combine customer and order data
+                    customers.forEach(customer => {
+                        const row = document.createElement('tr');
 
-                // Create table cells for each customer
-                const idCell = document.createElement('td');
-                idCell.textContent = customer.id;
+                        // Create table cells for each customer
+                        const idCell = document.createElement('td');
+                        idCell.textContent = customer.id;
 
-                const nameCell = document.createElement('td');
-                nameCell.textContent = `${customer.firstName} ${customer.lastName}`;
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = `${customer.firstName} ${customer.lastName}`;
 
-                const emailCell = document.createElement('td');
-                emailCell.textContent = customer.email;
+                        const dateCell = document.createElement('td');
+                        const totalAmountCell = document.createElement('td');
 
-                const roleCell = document.createElement('td');
-                roleCell.textContent = customer.occupation;
+                        // Find orders for the current customer
+                        const customerOrders = orders.filter(order => order.customerId === customer.id);
 
-                // Append the cells to the row
-                row.appendChild(idCell);
-                row.appendChild(nameCell);
-                row.appendChild(emailCell);
-                row.appendChild(roleCell);
+                        if (customerOrders.length > 0) {
+                            // Use the first order's date (assuming one order per customer for simplicity)
+                            dateCell.textContent = customerOrders[0].date;
 
-                // Append the row to the table body
-                tableBody.appendChild(row);
-            });
+                            // Calculate total amount for the customer
+                            const totalAmount = customerOrders.reduce((sum, order) => sum + order.total, 0);
+                            totalAmountCell.textContent = totalAmount.toFixed(2);
+                        } else {
+                            // If no orders, display placeholder values
+                            dateCell.textContent = "N/A";
+                            totalAmountCell.textContent = "0.00";
+                        }
+
+                        // Append the cells to the row
+                        row.appendChild(idCell);
+                        row.appendChild(nameCell);
+                        row.appendChild(dateCell);
+                        row.appendChild(totalAmountCell);
+
+                        // Append the row to the table body
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Error fetching order data:", error));
         })
         .catch(error => console.error("Error fetching customer data:", error));
 }
